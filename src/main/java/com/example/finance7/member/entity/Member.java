@@ -38,10 +38,10 @@ public class Member {
     private Date birthDay;
 
     @CreatedDate
-    @Column(name = "SIGNUP_DATE", columnDefinition = "DATETIME", nullable = false)
+    @Column(name = "SIGNUP_DATE", columnDefinition = "DATETIME")
     private LocalDateTime signUpDate;
 
-    @Column( name = "SECESSION", columnDefinition = "VARCHAR(255) DEFAULT 'OPEN'", nullable = false)
+    @Column( name = "SECESSION", columnDefinition = "VARCHAR(255) DEFAULT 'OPEN'")
     @Enumerated(EnumType.STRING)
     private Scession secession;
 
