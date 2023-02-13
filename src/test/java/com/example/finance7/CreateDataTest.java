@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
-class MiniProjectBeApplicationTests {
+class CreateDataTest {
 
     @Autowired
     CardRepository cardRepository;
