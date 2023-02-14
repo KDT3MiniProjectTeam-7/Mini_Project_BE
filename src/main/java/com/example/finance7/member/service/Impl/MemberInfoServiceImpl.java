@@ -1,6 +1,8 @@
 package com.example.finance7.member.service.Impl;
 
+import com.example.finance7.member.dto.MemberInfoRequest;
 import com.example.finance7.member.dto.MemberInfoResponse;
+import com.example.finance7.member.entity.Member;
 import com.example.finance7.member.repository.MemberRepository;
 import com.example.finance7.member.service.MemberInfoService;
 import lombok.RequiredArgsConstructor;
@@ -25,4 +27,23 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                 .orElse(new MemberInfoResponse("fail"));
     }
 
+    /**
+     * 회원정보를 수정한다.
+     *
+     * @param memberInfoRequest 변경할 회원정보 값들이 있는 dto
+     * @param memberId 현재 로그인하고 있는 유저의 memberId
+     * @return 회원정보 수정에 성공하면 success, 실패하면 fail를 반환한다.
+     */
+    @Override
+    public String updateMemberInfo(MemberInfoRequest memberInfoRequest, Long memberId) {
+        try {
+            Member member = memberRepository.findById(memberId).orElseThrow(Exception::new);
+            if (!isPasswordValid(member.getPassword(), memberInfoRequest.getOldPassword())) return "fail";
+            memberRepository.save(memberInfoRequest.toEntity(member));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "fail";
+        }
+        return "success";
+    }
 }
