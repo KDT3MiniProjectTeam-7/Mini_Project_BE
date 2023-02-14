@@ -24,7 +24,7 @@ public class Subscription extends Product {
     private String aboutRate;
 
     @Column(name = "BOUND", columnDefinition = "VARCHAR(255)")
-    private int bound;
+    private Integer bound;
 
     @Column(name = "PURCHASE", columnDefinition = "TEXT")
     private String purchase;
