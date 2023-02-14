@@ -28,13 +28,13 @@ public class Product {
     @Column(name = "COMPANY_NAME", columnDefinition = "VARCHAR(255)", nullable = false)
     private String companyName;
 
-    @Column(name = "COMPANY_IMAGE", columnDefinition = "VARCHAR(255)")
+    @Column(name = "COMPANY_IMAGE", columnDefinition = "VARCHAR(1000)")
     private String companyImage;
 
-    @Column(name = "THUMBNAIL", columnDefinition = "VARCHAR(255)")
+    @Column(name = "THUMBNAIL", columnDefinition = "VARCHAR(1000)")
     private String thumbnail;
 
-    @Column(name = "PRODUCT_URL", columnDefinition = "VARCHAR(255)")
+    @Column(name = "PRODUCT_URL", columnDefinition = "VARCHAR(1000)")
     private String productURL;
 
     @Column(name = "TAGS", columnDefinition = "TEXT")
