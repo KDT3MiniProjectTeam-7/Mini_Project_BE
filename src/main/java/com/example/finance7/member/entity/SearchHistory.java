@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class SearchHistory {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "HISTORY_ID")
     private Long historyId;
 

@@ -18,12 +18,15 @@ import javax.persistence.*;
 public class Subscription extends Product {
 
     @Column(name = "HIGH_RATE", columnDefinition = "VARCHAR(255)")
-    private String rate;
+    private String highRate;
+
+    @Column(name = "ABOUT_RATE", columnDefinition = "TEXT")
+    private String aboutRate;
 
     @Column(name = "BOUND", columnDefinition = "VARCHAR(255)")
-    private int bound;
+    private Integer bound;
 
-    @Column(name = "PURCHASE", columnDefinition = "VARCHAR(255)")
+    @Column(name = "PURCHASE", columnDefinition = "TEXT")
     private String purchase;
 
     @Column(name = "QUALIFICATION", columnDefinition = "TEXT")
