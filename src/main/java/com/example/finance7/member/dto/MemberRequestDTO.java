@@ -1,7 +1,11 @@
 package com.example.finance7.member.dto;
 
+import com.example.finance7.member.entity.Member;
 import io.jsonwebtoken.Claims;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -9,13 +13,26 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class MemberRequestDTO {
-    String memberId;
+
     String email;
     String name;
     String password;
-    String birthDay;
-    String signUpDate;
-    String secession;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    Date birth;
     String tags;
+
+    public Member toEntity(){
+        return Member.builder()
+                .email(email)
+                .name(name)
+                .password(password)
+                .birthDay(birth)
+                .tags(tags)
+                .build();
+    }
+
+    public MemberRequestDTO(Claims claims){
+        this.email = claims.get("email",String.class);
+    }
 
 }

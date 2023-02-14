@@ -9,6 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberResponseDTO {
+    String status;
+
     String memberId;
     String email;
     String name;
@@ -22,19 +24,14 @@ public class MemberResponseDTO {
 
     /**
      * ResponseDTO 에서 status 받아서 응답용 VO 생성
-     * @param status
+     *
      * @return
      */
-    public MemberVO toVO(String status){
+    public MemberVO toVO(){
         return MemberVO.builder()
                 .status(status)
-                .memberId(memberId)
                 .email(email)
                 .name(name)
-                .password(password)
-                .birthDay(birthDay)
-                .signUpDate(signUpDate)
-                .secession(secession)
                 .tags(tags)
                 .accessToken(accessToken)
                 .build();

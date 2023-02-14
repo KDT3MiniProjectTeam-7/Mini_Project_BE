@@ -2,6 +2,9 @@ package com.example.finance7.member.vo;
 
 import com.example.finance7.member.dto.MemberRequestDTO;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 @Builder
 @Getter
@@ -10,13 +13,11 @@ import lombok.*;
 public class MemberVO {
     String status;
 
-    String memberId;
     String email;
     String name;
     String password;
-    String birthDay;
-    String signUpDate;
-    String secession;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    Date birthDay;
     String tags;
 
     String accessToken;
@@ -27,13 +28,10 @@ public class MemberVO {
      */
     public MemberRequestDTO toDTO(){
         return MemberRequestDTO.builder()
-                .memberId(memberId)
                 .email(email)
                 .name(name)
                 .password(password)
-                .birthDay(birthDay)
-                .signUpDate(signUpDate)
-                .secession(secession)
+                .birth(birthDay)
                 .tags(tags)
                 .build();
     }

@@ -54,15 +54,11 @@ public class Member {
      * @param accessToken
      * @return
      */
-    public MemberResponseDTO toDTO(String accessToken){
+    public MemberResponseDTO toDTO(String status, String accessToken){
         return MemberResponseDTO.builder()
-                .memberId(String.valueOf(memberId))
+                .status(status)
                 .email(email)
                 .name(name)
-                .password(password)
-                .birthDay(String.valueOf(birthDay))
-                .signUpDate(String.valueOf(signUpDate))
-                .secession(String.valueOf(secession))
                 .tags(tags)
                 .accessToken(accessToken)
                 .build();
