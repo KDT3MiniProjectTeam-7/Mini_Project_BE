@@ -1,15 +1,20 @@
 package com.example.finance7.cart.service.impl;
 
+import com.example.finance7.cart.dto.*;
 import com.example.finance7.cart.entity.Cart;
 import com.example.finance7.cart.repository.CartRepository;
 import com.example.finance7.cart.service.CartService;
+import com.example.finance7.cart.vo.CartVO;
 import com.example.finance7.cart.vo.SimpleVO;
 import com.example.finance7.member.entity.Member;
 import com.example.finance7.member.service.MemberService;
-import com.example.finance7.product.entity.Product;
+import com.example.finance7.product.entity.*;
 import com.example.finance7.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,5 +61,43 @@ public class CartServiceImpl implements CartService {
         if (cartRepository.existsByMemberAndProduct(member, product)) {
             throw new Exception();
         }
+    }
+
+    /**
+     * 회원이 가진 장바구니 상품 모두 보기
+     * @param memberId
+     * @return
+     */
+    @Override
+    public CartVO selectAllCartProducts(Long memberId) {
+        Member member = memberService.findMemberByMemberId(memberId);
+        List<Cart> items = cartRepository.findCartsByMember(member);
+        List<ProductResponseDTO> resultData = makeResultData(items);
+        return CartVO.builder()
+                .dataNum(items.size())
+                .status("success")
+                .resultData(resultData)
+                .build();
+    }
+
+    /**
+     * 엔티티에 맞게 DTO 작성하는 메서드
+     * @param items
+     * @return
+     */
+    private List<ProductResponseDTO> makeResultData(List<Cart> items) {
+        List<ProductResponseDTO> resultData = new ArrayList<>();
+        for (Cart item : items) {
+            if (item.getProduct() instanceof Card) {
+                resultData.add(new CardResponseDTO().toDTO((Card)item.getProduct()));
+            } else if (item.getProduct() instanceof Loan) {
+                resultData.add(new LoanResponseDTO().toDTO((Loan)item.getProduct()));
+            } else if (item.getProduct() instanceof Savings) {
+                resultData.add(new SavingResponseDTO().toDTO((Savings)item.getProduct()));
+            } else if (item.getProduct() instanceof Subscription) {
+                resultData.add(new SubscriptionResponseDTO().toDTO((Subscription)item.getProduct()));
+            }
+        }
+        return resultData;
     }
 }
