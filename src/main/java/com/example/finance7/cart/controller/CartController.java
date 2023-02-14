@@ -22,7 +22,7 @@ public class CartController {
     }
 
     @GetMapping("/cart")
-    public CartVO selectAllCartProducts(@RequestBody Long productId) {
-        return cartService.selectAllCartProducts(productId);
+    public CartVO selectAllCartProducts() {
+        return cartService.selectAllCartProducts();
     }
 }

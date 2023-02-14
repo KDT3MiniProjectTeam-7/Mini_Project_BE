@@ -9,5 +9,5 @@ public interface CartService {
 
     SimpleVO addCart(Long productId);
 
-    CartVO selectAllCartProducts(Long memberId);
+    CartVO selectAllCartProducts();
 }

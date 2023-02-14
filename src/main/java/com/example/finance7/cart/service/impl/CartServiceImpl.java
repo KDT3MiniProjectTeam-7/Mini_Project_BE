@@ -64,12 +64,11 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 회원이 가진 장바구니 상품 모두 보기
-     * @param memberId
      * @return
      */
     @Override
-    public CartVO selectAllCartProducts(Long memberId) {
-        Member member = memberService.findMemberByMemberId(memberId);
+    public CartVO selectAllCartProducts() {
+        Member member = memberService.findMemberByMemberId(1L);
         List<Cart> items = cartRepository.findCartsByMember(member);
         List<ProductResponseDTO> resultData = makeResultData(items);
         return CartVO.builder()
