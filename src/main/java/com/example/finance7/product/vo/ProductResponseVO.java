@@ -1,14 +1,14 @@
 package com.example.finance7.product.vo;
 
-import com.example.finance7.product.dto.list.ProductResponseDTO;
+import com.example.finance7.product.dto.ProductResponseDTO;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
+
 
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 @ToString
 @Getter
 @Setter
