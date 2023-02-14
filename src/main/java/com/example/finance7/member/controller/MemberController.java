@@ -23,21 +23,8 @@ public class MemberController {
      */
     @PostMapping("/login")
     public MemberVO doLogin(@RequestBody MemberVO memberVO){
-        MemberVO responseVO = memberService.doLogin(memberVO.toDTO())
-                .toVO("success");
+        MemberVO responseVO = memberService.doLogin(memberVO.toDTO()).toVO();
 
         return responseVO;
-    }
-
-    /**
-     * 로그인 시 비밀번호 불일치 / 없는 계정 등 Exception 처리
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(NoSuchElementException.class)
-    public MemberVO handleNoSuchElementException(NoSuchElementException e){
-        return MemberVO.builder()
-                .status(e.getMessage())
-                .build();
     }
 }
