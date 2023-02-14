@@ -13,7 +13,7 @@ public class SubscriptionDetailResponseDTO extends ProductDetailResponseDTO{
 
     private String highRate;
     private String aboutRate;
-    private Integer limit;
+    private Integer bound;
     private String purchase;
     private String qualification;
 }
