@@ -26,14 +26,13 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 장바구니 상품 추가
-     * @param memberId
      * @param productId
      * @return
      */
     @Override
-    public SimpleVO addCart(Long memberId, Long productId) {
+    public SimpleVO addCart(Long productId) {
         try {
-            Member member = memberService.findMemberByMemberId(memberId);
+            Member member = memberService.findMemberByMemberId(1L);
             Product product = productService.findProductByProductId(productId);
             duplicateCheck(member, product);
             Cart item = Cart.builder()
