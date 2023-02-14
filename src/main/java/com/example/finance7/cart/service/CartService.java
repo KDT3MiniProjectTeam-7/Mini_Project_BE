@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CartService {
 
-    SimpleVO addCart(Long memberId, Long productId);
+    SimpleVO addCart(Long productId);
 
     CartVO selectAllCartProducts(Long memberId);
 }
