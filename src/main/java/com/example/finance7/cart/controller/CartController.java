@@ -1,5 +1,6 @@
 package com.example.finance7.cart.controller;
 
+import com.example.finance7.cart.dto.AddCartRequestDTO;
 import com.example.finance7.cart.service.CartService;
 import com.example.finance7.cart.vo.CartVO;
 import com.example.finance7.cart.vo.SimpleVO;
@@ -16,8 +17,8 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping("/cart")
-    public SimpleVO addCart(@RequestBody Long productId, Long memberId) {
-        return cartService.addCart(productId, memberId);
+    public SimpleVO addCart(@RequestBody AddCartRequestDTO requestDTO) {
+        return cartService.addCart(requestDTO.getProductId());
     }
 
     @GetMapping("/cart")
