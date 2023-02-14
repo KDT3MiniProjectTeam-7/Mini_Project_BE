@@ -46,4 +46,16 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         }
         return "success";
     }
+
+    /**
+     * 비밀번호 일치 여부 검사
+     *
+     * @param memberPassword 현재 로그인하고 있는 유저의 비밀번호
+     * @param oldPassword 변경 전 비밀번호
+     * @return memberPassword와 oldPassword가 같으면 true, 다르면 false를 반환한다.
+     */
+    @Override
+    public boolean isPasswordValid(String memberPassword, String oldPassword) {
+        return (memberPassword.equals(oldPassword)) ? true : false;
+    }
 }
