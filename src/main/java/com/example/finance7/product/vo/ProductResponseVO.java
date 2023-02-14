@@ -16,6 +16,6 @@ import java.util.List;
 public class ProductResponseVO {
 
     private String status;
-    private Integer dateNum;
+    private Integer dataNum;
     private List<ProductResponseDTO> resultData = new ArrayList<>();
 }
