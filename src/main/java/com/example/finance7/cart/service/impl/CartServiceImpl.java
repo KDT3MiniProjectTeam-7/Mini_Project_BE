@@ -18,6 +18,13 @@ public class CartServiceImpl implements CartService {
     private final MemberService memberService;
     private final ProductService productService;
     private final CartRepository cartRepository;
+
+    /**
+     * 장바구니 상품 추가
+     * @param memberId
+     * @param productId
+     * @return
+     */
     @Override
     public SimpleVO addCart(Long memberId, Long productId) {
         try {
