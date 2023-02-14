@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 public class subscriptionResponseDTO extends ProductResponseDTO {
 
     private String highRate;
+    private String aboutRate;
     private Integer limit;
     private String purchase;
     private String qualification;
