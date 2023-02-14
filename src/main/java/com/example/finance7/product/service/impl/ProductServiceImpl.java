@@ -1,6 +1,7 @@
 package com.example.finance7.product.service.impl;
 
 import com.example.finance7.product.dto.detail.*;
+import com.example.finance7.product.dto.list.ProductResponseDTO;
 import com.example.finance7.product.entity.*;
 import com.example.finance7.product.repository.ProductRepository;
 import com.example.finance7.product.service.ProductService;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -96,6 +98,16 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public List<ProductResponseVO> recommendation(String tagString) {
+//        List<Product> products = productRepository.findAll();
+//        List<ProductResponseDTO> productResponseDTOS = new ArrayList<>();
+//        String[] tags = tagString.split("&");
+//        for (Product product : products) {
+//            for (String tag : tags) {
+//                if (product.getTags().contains(tag)) {
+//
+//                }
+//            }
+//        }
         return null;
     }
 
