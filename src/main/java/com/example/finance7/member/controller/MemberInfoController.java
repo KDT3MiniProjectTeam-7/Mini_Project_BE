@@ -24,4 +24,16 @@ public class MemberInfoController {
         String memberId = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return memberInfoService.findMemberInfo(Long.parseLong(memberId));
     }
+
+    /**
+     * 회원정보를 수정한다.
+     *
+     * @param memberInfoRequest 변경할 회원정보 값들이 있는 dto
+     * @return 회원정보 수정에 성공하면 success, 실패하면 fail 반환한다.
+     */
+    @PatchMapping("user")
+    public String updateMemberInfo(@RequestBody MemberInfoRequest memberInfoRequest) {
+        String memberId = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return memberInfoService.updateMemberInfo(memberInfoRequest, Long.parseLong(memberId));
+    }
 }
