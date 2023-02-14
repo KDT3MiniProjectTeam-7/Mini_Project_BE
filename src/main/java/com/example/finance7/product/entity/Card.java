@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class Card extends Product {
 
     @Column(name = "ANNUAL_FEE")
-    private int annualFee;
+    private Integer annualFee;
 
     @Column(name = "BENEFITS", columnDefinition = "TEXT")
     private String benefits;
