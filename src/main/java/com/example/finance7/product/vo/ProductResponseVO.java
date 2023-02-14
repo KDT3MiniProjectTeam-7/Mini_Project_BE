@@ -4,6 +4,7 @@ import com.example.finance7.product.dto.ProductResponseDTO;
 import lombok.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -16,5 +17,5 @@ public class ProductResponseVO {
 
     private String status;
     private Integer dateNum;
-    private List<ProductResponseDTO> resultData;
+    private List<ProductResponseDTO> resultData = new ArrayList<>();
 }

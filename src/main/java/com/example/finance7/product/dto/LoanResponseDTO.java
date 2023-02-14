@@ -13,6 +13,6 @@ public class LoanResponseDTO extends ProductResponseDTO{
 
     private String lowRate;
     private String highRate;
-    private String limit;
+    private String bound;
     private String qualification;
 }

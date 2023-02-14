@@ -9,11 +9,11 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @Getter
 @Setter
-public class subscriptionResponseDTO extends ProductResponseDTO {
+public class SubscriptionResponseDTO extends ProductResponseDTO {
 
     private String highRate;
     private String aboutRate;
-    private Integer limit;
+    private Integer bound;
     private String purchase;
     private String qualification;
 }

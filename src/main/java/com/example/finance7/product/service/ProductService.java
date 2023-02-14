@@ -1,6 +1,5 @@
 package com.example.finance7.product.service;
 
-import com.example.finance7.product.dto.detail.ProductDetailResponseDTO;
 import com.example.finance7.product.vo.ProductResponseVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +14,7 @@ public interface ProductService {
      * @param productId
      * @return
      */
-    public ProductDetailResponseDTO detail(Long productId);
+    public ProductResponseVO selectProductDetail(Long productId);
 
     /**
      * 추천 상품 조회
