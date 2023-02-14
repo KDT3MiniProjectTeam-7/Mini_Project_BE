@@ -1,4 +1,4 @@
-package com.example.finance7.product.dto.detail;
+package com.example.finance7.product.dto;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -9,9 +9,8 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @Getter
 @Setter
-public class CardDetailResponseDTO extends ProductDetailResponseDTO {
+public class CardResponseDTO extends ProductResponseDTO{
 
     private String[] benefits;
     private Integer annualFee;
 }
-
