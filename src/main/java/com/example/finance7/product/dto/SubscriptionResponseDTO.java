@@ -1,4 +1,4 @@
-package com.example.finance7.product.dto.detail;
+package com.example.finance7.product.dto;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @Getter
 @Setter
-public class SubscriptionDetailResponseDTO extends ProductDetailResponseDTO{
+public class SubscriptionResponseDTO extends ProductResponseDTO {
 
     private String highRate;
     private String aboutRate;

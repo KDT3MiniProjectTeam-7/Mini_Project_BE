@@ -1,4 +1,4 @@
-package com.example.finance7.product.dto.list;
+package com.example.finance7.product.dto;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,5 +16,6 @@ public class ProductResponseDTO {
     private String productName;
     private String companyName;
     private String companyImage;
+    private String productURL;
     private String thumbnail;
 }

@@ -1,6 +1,5 @@
 package com.example.finance7.product.controller;
 
-import com.example.finance7.product.dto.detail.ProductDetailResponseDTO;
 import com.example.finance7.product.service.ProductService;
 import com.example.finance7.product.vo.ProductResponseVO;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,8 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/items/{productId}")
-    public ProductDetailResponseDTO productDetail(@PathVariable Long productId) {
-        return productService.detail(productId);
+    public ProductResponseVO productDetail(@PathVariable Long productId) {
+        return productService.selectProductDetail(productId);
     }
 
     @GetMapping("/Recommendation/{tagString}")
