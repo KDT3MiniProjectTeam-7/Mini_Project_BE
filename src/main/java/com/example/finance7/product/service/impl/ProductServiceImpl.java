@@ -1,9 +1,6 @@
 package com.example.finance7.product.service.impl;
 
-import com.example.finance7.product.dto.CardResponseDTO;
-import com.example.finance7.product.dto.LoanResponseDTO;
-import com.example.finance7.product.dto.SavingResponseDTO;
-import com.example.finance7.product.dto.SubscriptionResponseDTO;
+import com.example.finance7.product.dto.*;
 import com.example.finance7.product.entity.*;
 import com.example.finance7.product.repository.ProductRepository;
 import com.example.finance7.product.service.ProductService;
@@ -14,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -62,8 +60,8 @@ public class ProductServiceImpl implements ProductService {
                         .productURL(product.getProductURL())
                         .lowRate(((Loan) product).getLowRate())
                         .highRate(((Loan) product).getHighRate())
-                        .bound(((Loan) product).getBound())
-                        .qualification(((Loan) product).getQualification())
+                        .bound(((Loan) product).getBound().split("\\\\n"))
+                        .qualification(((Loan) product).getQualification().split("\\\\n"))
                         .build();
                 ProductResponseVO productResponseVO = getProductResponseVO();
                 productResponseVO.getResultData().add(loan);
@@ -80,8 +78,8 @@ public class ProductServiceImpl implements ProductService {
                         .productURL(product.getProductURL())
                         .basicRate(((Savings) product).getBasicRate())
                         .primeRate(((Savings) product).getPrimeRate())
-                        .qualification(((Savings) product).getQualification())
-                        .aboutPrimeRate(((Savings) product).getAboutPrimeRate())
+                        .qualification(((Savings) product).getQualification().split("\\\\n"))
+                        .aboutPrimeRate(((Savings) product).getAboutPrimeRate().split("\\\\"))
                         .build();
                 ProductResponseVO productResponseVO = getProductResponseVO();
                 productResponseVO.getResultData().add(savings);
@@ -96,10 +94,10 @@ public class ProductServiceImpl implements ProductService {
                         .companyImage(product.getCompanyImage())
                         .productURL(product.getProductURL())
                         .highRate(subscription.getHighRate())
-                        .aboutRate(subscription.getAboutRate())
+                        .aboutRate(subscription.getAboutRate().split("\\\\n"))
                         .bound(subscription.getBound())
-                        .purchase(subscription.getPurchase())
-                        .qualification(subscription.getQualification())
+                        .purchase(subscription.getPurchase().split("\\\\n"))
+                        .qualification(subscription.getQualification().split("\\\\n"))
                         .build();
                 ProductResponseVO productResponseVO = getProductResponseVO();
                 productResponseVO.getResultData().add(subscriptionResponseDTO);
@@ -127,12 +125,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponseVO> recommendation(String tagString) {
 //        List<Product> products = productRepository.findAll();
-//        List<ProductResponseDTO> productResponseDTOS = new ArrayList<>();
+//        List<Product> result = new ArrayList<>();
 //        String[] tags = tagString.split("&");
 //        for (Product product : products) {
 //            for (String tag : tags) {
 //                if (product.getTags().contains(tag)) {
-//
+//                    result.add(product);
 //                }
 //            }
 //        }

@@ -13,6 +13,6 @@ public class SavingResponseDTO extends ProductResponseDTO{
 
     private String basicRate;
     private String primeRate;
-    private String qualification;
-    private String aboutPrimeRate;
+    private String[] qualification;
+    private String[] aboutPrimeRate;
 }
