@@ -1,5 +1,6 @@
 package com.example.finance7.member.entity;
 
+import com.example.finance7.member.dto.MemberResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,4 +48,19 @@ public class Member {
 
     @Column(name = "TAGS", columnDefinition = "TEXT")
     private String tags;
+
+    /**
+     * Token 을 받아 응답 DTO 로 생성
+     * @param accessToken
+     * @return
+     */
+    public MemberResponseDTO toDTO(String status, String accessToken){
+        return MemberResponseDTO.builder()
+                .status(status)
+                .email(email)
+                .name(name)
+                .tags(tags)
+                .accessToken(accessToken)
+                .build();
+    }
 }
