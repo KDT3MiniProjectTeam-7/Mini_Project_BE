@@ -24,8 +24,8 @@ public class ProductController {
     }
 
     @GetMapping("/Recommendation/{tagString}")
-    public List<ProductResponseVO> recommendationProduct(@PathVariable String tagString) {
-        return productService.recommendation(tagString);
+    public ProductResponseVO recommendationProduct(@PathVariable String tagString) {
+        return productService.recommendationProductsList(tagString);
     }
 
     @GetMapping("/items/all/{category}/{page}/{tagString}")
