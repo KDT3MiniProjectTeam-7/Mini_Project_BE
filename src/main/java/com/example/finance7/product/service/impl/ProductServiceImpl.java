@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -20,6 +21,16 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
+    @Override
+    public Product findProductByProductId(Long productId) {
+
+        Optional<Product> product = productRepository.findById(productId);
+        if (!product.isPresent()) {
+            throw new NoSuchElementException("상품을 찾을 수 없습니다.");
+        } else {
+            return product.get();
+        }
+    }
     /**
      * productId를 이용하여 상세 상품 조회
      * @param productId

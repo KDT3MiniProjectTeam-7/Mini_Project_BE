@@ -18,10 +18,23 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
+
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final RedisTemplate redisTemplate;
+
+
+    @Override
+    public Member findMemberByMemberId(Long memberId) {
+        Optional<Member> member = memberRepository.findById(memberId);
+        if (!member.isPresent()) {
+            throw new NullPointerException("회원을 찾을 수 없습니다.");
+        }
+        else {
+            return member.get();
+        }
+    }
 
     /**
      * 로그인 기능 수행 및 Access Token 발급 및 redis 저장
@@ -80,5 +93,4 @@ public class MemberServiceImpl implements MemberService {
     public boolean isOpenUser(Member member){
         return member.getSecession().equals(Scession.OPEN);
     }
-
 }
