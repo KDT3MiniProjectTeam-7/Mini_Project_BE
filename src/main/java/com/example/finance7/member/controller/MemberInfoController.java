@@ -1,12 +1,17 @@
 package com.example.finance7.member.controller;
 
-import com.example.finance7.member.dto.MemberInfoRequest;
-import com.example.finance7.member.dto.MemberInfoResponse;
+import com.example.finance7.member.dto.SomeMemberInfoDto;
+import com.example.finance7.member.dto.SomeMemberUpdateInfoRequest;
+import com.example.finance7.member.dto.StatusResponse;
 import com.example.finance7.member.service.MemberInfoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/")
@@ -15,25 +20,37 @@ public class MemberInfoController {
     private final MemberInfoService memberInfoService;
 
     /**
-     * 회원정보를 조회한다.
+     * 일부 회원정보를 조회한다.
      *
-     * @return 로그인하고 있는 유저의 memberId로 유저의 email, name, tags와 상태 (success 또는 fail)를 dto에 넣어 반환한다.
+     * @return 현재 로그인 중인 member email, name, age, tags 정보와 status 정보 반환 (response dto)
      */
     @GetMapping("user")
-    public MemberInfoResponse listMemberInfo() {
-        String memberId = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return memberInfoService.findMemberInfo(Long.parseLong(memberId));
+    public StatusResponse findSomeMemberInfo() {
+        try {
+            SomeMemberInfoDto memberInfoDto = memberInfoService.findSomeMemberInfo();
+
+            return memberInfoDto.toResponse("success");
+        } catch (NullPointerException | NoSuchElementException e) {
+            log.error(e.getMessage());
+
+            return StatusResponse.builder()
+                    .status("fail")
+                    .build();
+        }
     }
 
     /**
      * 회원정보를 수정한다.
      *
-     * @param memberInfoRequest 변경할 회원정보 값들이 있는 dto
-     * @return 회원정보 수정에 성공하면 success, 실패하면 fail 반환한다.
+     * @param memberUpdateInfoRequest 변경할 회원정보 값 (request dto)
+     * @return status 정보 반환 (response dto)
      */
     @PatchMapping("user")
-    public String updateMemberInfo(@RequestBody MemberInfoRequest memberInfoRequest) {
-        String memberId = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return memberInfoService.updateMemberInfo(memberInfoRequest, Long.parseLong(memberId));
+    public StatusResponse updateSomeMemberInfo(@RequestBody SomeMemberUpdateInfoRequest memberUpdateInfoRequest) {
+        String status = memberInfoService.updateSomeMemberInfo(memberUpdateInfoRequest.toDto());
+
+        return StatusResponse.builder()
+                .status(status)
+                .build();
     }
 }
