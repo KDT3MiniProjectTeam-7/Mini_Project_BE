@@ -1,12 +1,17 @@
 package com.example.finance7.member.service;
 
-import com.example.finance7.member.dto.MemberInfoRequest;
-import com.example.finance7.member.dto.MemberInfoResponse;
+import com.example.finance7.member.dto.SomeMemberInfoDto;
+import com.example.finance7.member.dto.SomeMemberUpdateInfoDto;
+import com.example.finance7.member.entity.Member;
+
+import java.util.Date;
 
 public interface MemberInfoService {
-    MemberInfoResponse findMemberInfo(Long memberId);
+    Member findAllMemberInfo();
 
-    String updateMemberInfo(MemberInfoRequest memberInfoRequest, Long memberId);
+    SomeMemberInfoDto findSomeMemberInfo();
 
-    boolean isPasswordValid(String memberPassword, String oldPassword);
+    String updateSomeMemberInfo(SomeMemberUpdateInfoDto requestDto);
+
+    int calculateAge(Date birthday);
 }
