@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -23,7 +24,6 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final RedisTemplate redisTemplate;
-
 
     @Override
     public Member findMemberByMemberId(Long memberId) {
@@ -37,6 +37,46 @@ public class MemberServiceImpl implements MemberService {
     }
 
     /**
+     * 회원가입
+     * @param memberRequestDTO
+     * @return
+     */
+    @Override
+    public MemberResponseDTO doRegister(MemberRequestDTO memberRequestDTO) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberRequestDTO.getEmail());
+
+        try {
+            Member member = optionalMember.get();
+
+            if (isExistMember(member)){
+                throw new NoSuchElementException("가입된 이메일입니다");
+            }
+
+            memberRequestDTO.setPassword(encodePassword(memberRequestDTO.getPassword()));
+
+            return memberRepository.save(memberRequestDTO.toEntity()).toDTO("success", null);
+        }catch (NoSuchElementException e){
+            return MemberResponseDTO.builder()
+                    .status("failed : 가입된 이메일입니다.")
+                    .build();
+        }
+    }
+
+    /**
+     * 로그아웃 redis 정보 삭제
+     * @param accessToken
+     * @return
+     */
+    @Override
+    public String doLogout(String accessToken) {
+        String token = accessToken.substring("Baerer ".length());
+
+        redisTemplate.opsForValue().getAndDelete(token);
+
+        return "success";
+    }
+
+    /**
      * 로그인 기능 수행 및 Access Token 발급 및 redis 저장
      *
      * @param memberRequestDTO
@@ -46,9 +86,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberResponseDTO doLogin(MemberRequestDTO memberRequestDTO) {
         Member requestMember = memberRequestDTO.toEntity();
 
-        Optional<Member> optionalMember = memberRepository.findByEmail(
-                memberRequestDTO.getEmail()
-        );
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberRequestDTO.getEmail());
 
         try {
             Member responseMember = optionalMember.get();
@@ -93,4 +131,13 @@ public class MemberServiceImpl implements MemberService {
     public boolean isOpenUser(Member member){
         return member.getSecession().equals(Scession.OPEN);
     }
+
+    public boolean isExistMember(Member member){
+        return memberRepository.existsByEmail(member.getEmail());
+    }
+
+    public String encodePassword(String password){
+        return passwordEncoder.encode(password);
+    }
+
 }
