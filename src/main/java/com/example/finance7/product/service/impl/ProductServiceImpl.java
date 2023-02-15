@@ -11,9 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -22,6 +21,16 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
+    @Override
+    public Product findProductByProductId(Long productId) {
+
+        Optional<Product> product = productRepository.findById(productId);
+        if (!product.isPresent()) {
+            throw new NoSuchElementException("상품을 찾을 수 없습니다.");
+        } else {
+            return product.get();
+        }
+    }
     /**
      * productId를 이용하여 상세 상품 조회
      * @param productId
@@ -58,20 +67,43 @@ public class ProductServiceImpl implements ProductService {
      * @return
      */
     @Override
-    public List<ProductResponseVO> recommendation(String tagString) {
-//        List<Product> products = productRepository.findAll();
-//        List<ProductResponseVO> result = new ArrayList<>();
-//        String[] tags = tagString.split("&");
-//        for (Product product : products) {
-//            for (String tag : tags) {
-//                if (product.getTags().contains(tag)) {
-//                    ProductResponseVO productResponseVO = new ProductResponseDTO().toVo(product);
-//                    result.add(productResponseVO);
-//                }
-//            }
-//        }
-//        return result;
-        return null;
+    public ProductResponseVO recommendationProductsList(String tagString) {
+        List<Product> products = productRepository.findAll();
+
+        String[] tags = tagString.split("&");
+        Map<Long, ProductResponseDTO> deduplication = deduplication(products, tags);
+        List<ProductResponseDTO> result = new ArrayList<>(deduplication.values());
+        if (result.size() == 0){
+            return ProductResponseVO.builder()
+                    .dataNum(0)
+                    .status("failed 검색결과가 없습니다.")
+                    .build();
+        } else {
+            return ProductResponseVO.builder()
+                    .dataNum(result.size())
+                    .status("success")
+                    .resultData(result)
+                    .build();
+        }
+    }
+
+    /**
+     * 맵을 이용하여 중복값 제거하는 메서드
+     * @param products
+     * @param tags
+     * @return
+     */
+    private Map<Long, ProductResponseDTO> deduplication(List<Product> products, String[] tags) {
+        Map<Long, ProductResponseDTO> duplicateResult = new HashMap<>();
+        for (Product product : products) {
+            for (String tag : tags) {
+                if (product.getTags().contains(tag)) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    duplicateResult.put(product.getProductId(), productResponseDTO);
+                }
+            }
+        }
+        return duplicateResult;
     }
 
     /**
