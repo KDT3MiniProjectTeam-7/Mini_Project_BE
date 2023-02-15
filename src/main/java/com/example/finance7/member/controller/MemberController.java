@@ -3,11 +3,14 @@ package com.example.finance7.member.controller;
 import com.example.finance7.member.service.impl.MemberServiceImpl;
 import com.example.finance7.member.vo.MemberVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -23,8 +26,25 @@ public class MemberController {
      */
     @PostMapping("/login")
     public MemberVO doLogin(@RequestBody MemberVO memberVO){
-        MemberVO responseVO = memberService.doLogin(memberVO.toDTO()).toVO();
+        return memberService.doLogin(memberVO.toDTO()).toVO();
+    }
 
-        return responseVO;
+    /**
+     * 회원가입
+     * @param memberVO
+     * @return
+     */
+    @PostMapping("/register")
+    public MemberVO doRegister(@RequestBody MemberVO memberVO){
+        return memberService.doRegister(memberVO.toDTO()).toVO();
+    }
+
+    /**
+     * 로그아웃
+     */
+    @PostMapping("/logout")
+    public String doLogout(HttpServletRequest request){
+        return memberService.doLogout(request.getHeader(HttpHeaders.AUTHORIZATION));
+
     }
 }
