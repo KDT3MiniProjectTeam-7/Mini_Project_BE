@@ -1,10 +1,11 @@
-package com.example.finance7.member.service.Impl;
+package com.example.finance7.member.service.impl;
 
 import com.example.finance7.member.dto.SomeMemberInfoDto;
 import com.example.finance7.member.dto.SomeMemberUpdateInfoDto;
 import com.example.finance7.member.entity.Member;
 import com.example.finance7.member.repository.MemberRepository;
 import com.example.finance7.member.service.MemberInfoService;
+import com.example.finance7.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +21,7 @@ import java.util.NoSuchElementException;
 public class MemberInfoServiceImpl implements MemberInfoService {
 
     private final MemberRepository memberRepository;
-    private final MemberService memberService;
+    private final MemberServiceImpl memberService;
 
     /**
      *전체 회원정보를 조회한다.
