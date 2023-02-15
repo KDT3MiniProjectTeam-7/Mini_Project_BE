@@ -103,7 +103,9 @@ public class MemberServiceImpl implements MemberService {
             redisTemplate.opsForValue()
                     .set(accessToken, jwtProvider.tokenToMember("Bearer "+accessToken).getExpiration().toString());
 
-            return responseMember.toDTO("success", jwtProvider.token(responseMember.getEmail()));
+            redisTemplate.expire(accessToken, Duration.ofMinutes(60));
+
+            return responseMember.toDTO("success", accessToken);
         } catch (NoSuchElementException e) {
             return MemberResponseDTO.builder()
                     .status("failed : Email/Password 불일치")
