@@ -25,7 +25,7 @@ public interface ProductService {
      * @param tagString
      * @return
      */
-    public List<ProductResponseVO> recommendation(String tagString);
+    public ProductResponseVO recommendationProductsList(String tagString);
 
     /**
      * 카테고리별 상품 조회
