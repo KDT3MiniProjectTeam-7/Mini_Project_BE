@@ -1,61 +1,101 @@
 package com.example.finance7.member.service.Impl;
 
-import com.example.finance7.member.dto.MemberInfoRequest;
-import com.example.finance7.member.dto.MemberInfoResponse;
+import com.example.finance7.member.dto.SomeMemberInfoDto;
+import com.example.finance7.member.dto.SomeMemberUpdateInfoDto;
 import com.example.finance7.member.entity.Member;
 import com.example.finance7.member.repository.MemberRepository;
 import com.example.finance7.member.service.MemberInfoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.NoSuchElementException;
+
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MemberInfoServiceImpl implements MemberInfoService {
 
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     /**
-     *회원정보를 조회한다.
+     *전체 회원정보를 조회한다.
      *
-     * @param memberId 현재 로그인하고 있는 유저의 memberId
-     * @return memberId가 유효하면 유저의 email, name, tags와 상태 "success"를 dto에 넣어 반환하고, 유효하지 않으면 상태 "fail"만 dto에 넣어 반환한다.
+     * @return 현재 로그인 중인 member 전체 정보 반환 (Entity)
      */
     @Override
-    public MemberInfoResponse findMemberInfo(Long memberId) {
-        return memberRepository.findById(memberId)
-                .map(member -> new MemberInfoResponse(member, "success"))
-                .orElse(new MemberInfoResponse("fail"));
+    public Member findAllMemberInfo() throws NullPointerException, NoSuchElementException {
+        String email = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new NullPointerException("존재하지 않는 회원입니다."));
+
+        if (!memberService.isOpenUser(member)) {
+            throw new NoSuchElementException("이미 탈퇴한 회원입니다.");
+        }
+        return member;
+    }
+
+    /**
+     * 일부 회원정보를 조회한다.
+     *
+     * @return 현재 로그인 중인 member의 email, name, age, tags 정보 반환 (dto)
+     */
+    @Override
+    public SomeMemberInfoDto findSomeMemberInfo() throws NullPointerException, NoSuchElementException {
+        Member member = findAllMemberInfo();
+        int age = calculateAge(member.getBirthDay());
+
+        return member.toSomeMemberInfoDto(age);
     }
 
     /**
      * 회원정보를 수정한다.
      *
-     * @param memberInfoRequest 변경할 회원정보 값들이 있는 dto
-     * @param memberId 현재 로그인하고 있는 유저의 memberId
-     * @return 회원정보 수정에 성공하면 success, 실패하면 fail를 반환한다.
+     * @param memberUpdateInfoDto 변경할 회원정보 값 (dto)
+     * @return 회원정보 수정 성공 시 success, 실패 시 fail 반환 (String)
      */
     @Override
-    public String updateMemberInfo(MemberInfoRequest memberInfoRequest, Long memberId) {
+    public String updateSomeMemberInfo(SomeMemberUpdateInfoDto memberUpdateInfoDto) {
         try {
-            Member member = memberRepository.findById(memberId).orElseThrow(Exception::new);
-            if (!isPasswordValid(member.getPassword(), memberInfoRequest.getOldPassword())) return "fail";
-            memberRepository.save(memberInfoRequest.toEntity(member));
-        } catch (Exception e) {
-            e.printStackTrace();
+            Member responseMember = findAllMemberInfo();
+            Member requestMember = memberUpdateInfoDto.toEntityWithUpdate(responseMember);
+
+            if (!memberService.isMatchPassword(requestMember, responseMember)) {
+                return "fail";
+            }
+
+            memberUpdateInfoDto.setNewPassword(memberService.encodePassword(memberUpdateInfoDto.getNewPassword()));
+            memberRepository.save(memberUpdateInfoDto.toEntityWithUpdate(responseMember));
+        } catch (NullPointerException | NoSuchElementException e) {
+            log.error(e.getMessage());
+
             return "fail";
         }
         return "success";
     }
 
     /**
-     * 비밀번호 일치 여부 검사
+     * 나이를 계산한다.
      *
-     * @param memberPassword 현재 로그인하고 있는 유저의 비밀번호
-     * @param oldPassword 변경 전 비밀번호
-     * @return memberPassword와 oldPassword가 같으면 true, 다르면 false를 반환한다.
+     * @param birthday 생일날짜시간 (Date)
+     * @return 나이 (int)
      */
     @Override
-    public boolean isPasswordValid(String memberPassword, String oldPassword) {
-        return (memberPassword.equals(oldPassword)) ? true : false;
+    public int calculateAge(Date birthday) {
+        Calendar today = Calendar.getInstance();
+        int age = today.get(Calendar.YEAR) - (birthday.getYear() + 1900);
+
+        if (today.get(Calendar.MONTH) > birthday.getMonth()) {
+            return age;
+        }
+
+        if (today.get(Calendar.MONTH) == birthday.getMonth() && today.get(Calendar.DATE) >= birthday.getDate()) {
+            return age;
+        }
+        return age - 1;
     }
 }
