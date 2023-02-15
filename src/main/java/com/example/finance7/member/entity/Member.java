@@ -1,5 +1,6 @@
 package com.example.finance7.member.entity;
 
+import com.example.finance7.member.dto.SomeMemberInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,4 +48,19 @@ public class Member {
 
     @Column(name = "TAGS", columnDefinition = "TEXT")
     private String tags;
+
+    /**
+     * Entity를 일부 회원정보 dto로 변환한다.
+     *
+     * @param age 나이 (int)
+     * @return 일부 회원정보 (dto)
+     */
+    public SomeMemberInfoDto toSomeMemberInfoDto(int age) {
+        return SomeMemberInfoDto.builder()
+                .email(email)
+                .name(name)
+                .age(age)
+                .tags(tags)
+                .build();
+    }
 }
