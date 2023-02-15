@@ -62,11 +62,18 @@ public class ProductServiceImpl implements ProductService {
         String[] tags = tagString.split("&");
         Map<Long, ProductResponseDTO> deduplication = deduplication(products, tags);
         List<ProductResponseDTO> result = new ArrayList<>(deduplication.values());
-        return ProductResponseVO.builder()
-                .dataNum(result.size())
-                .status("success")
-                .resultData(result)
-                .build();
+        if (result.size() == 0){
+            return ProductResponseVO.builder()
+                    .dataNum(0)
+                    .status("failed 검색결과가 없습니다.")
+                    .build();
+        } else {
+            return ProductResponseVO.builder()
+                    .dataNum(result.size())
+                    .status("success")
+                    .resultData(result)
+                    .build();
+        }
     }
 
     /**
