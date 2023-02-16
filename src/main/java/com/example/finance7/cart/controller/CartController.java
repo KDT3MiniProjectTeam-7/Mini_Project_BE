@@ -5,10 +5,7 @@ import com.example.finance7.cart.service.CartService;
 import com.example.finance7.cart.vo.CartVO;
 import com.example.finance7.cart.vo.SimpleVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +21,10 @@ public class CartController {
     @GetMapping("/cart")
     public CartVO selectAllCartProducts() {
         return cartService.selectAllCartProducts();
+    }
+
+    @DeleteMapping("/cart")
+    public SimpleVO deleteItem(@RequestBody CartRequestDTO requestDTO) {
+        return cartService.deleteItem(requestDTO.getProductId());
     }
 }
