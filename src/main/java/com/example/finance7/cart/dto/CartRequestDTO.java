@@ -7,6 +7,6 @@ import lombok.*;
 @Setter
 @Getter
 @Builder
-public class AddCartRequestDTO {
+public class CartRequestDTO {
     private Long productId;
 }
