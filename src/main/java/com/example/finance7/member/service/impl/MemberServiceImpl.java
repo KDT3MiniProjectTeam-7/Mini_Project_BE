@@ -95,13 +95,13 @@ public class MemberServiceImpl implements MemberService {
                 throw new NoSuchElementException();
             }
             if (!isOpenUser(responseMember)) {
-                throw new NoSuchElementException();
+                throw new IllegalStateException();
             }
 
             String accessToken = jwtProvider.token(responseMember.getEmail());
 
             redisTemplate.opsForValue()
-                    .set(accessToken, jwtProvider.tokenToMember("Bearer "+accessToken).getExpiration().toString());
+                    .set(accessToken, jwtProvider.tokenToMember("Bearer " + accessToken).getExpiration().toString());
 
             redisTemplate.expire(accessToken, Duration.ofMinutes(60));
 
@@ -109,6 +109,10 @@ public class MemberServiceImpl implements MemberService {
         } catch (NoSuchElementException e) {
             return MemberResponseDTO.builder()
                     .status("failed : Email/Password 불일치")
+                    .build();
+        } catch (IllegalStateException e) {
+            return MemberResponseDTO.builder()
+                    .status("failed : 가입 해지된 계정")
                     .build();
         }
     }
