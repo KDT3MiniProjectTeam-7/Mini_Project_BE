@@ -8,7 +8,7 @@ public interface MemberService {
 
     MemberResponseDTO doLogin(MemberRequestDTO memberRequestDTO);
 
-    Member findMemberByMemberId(Long memberId);
+    Member findMemberByEmail(String email);
 
     MemberResponseDTO doRegister(MemberRequestDTO memberRequestDTO);
 
