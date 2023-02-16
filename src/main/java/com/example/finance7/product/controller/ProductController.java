@@ -1,6 +1,7 @@
 package com.example.finance7.product.controller;
 
 import com.example.finance7.product.service.ProductService;
+import com.example.finance7.product.vo.ProductResponsePagingVO;
 import com.example.finance7.product.vo.ProductResponseVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,21 +29,19 @@ public class ProductController {
         return productService.recommendationProductsList(tagString);
     }
 
-    @GetMapping("/items/all/{category}/{page}/{tagString}")
-    public Page<ProductResponseVO> groupByCategory(@PathVariable String category,
-                                                   @PathVariable Integer page,
-                                                   @PathVariable String tagString,
-                                                   @PageableDefault(page = 1,size = 5) Pageable pageable) {
-
-        return productService.categoryList(pageable, tagString);
+    @GetMapping("/items/all")
+    public ProductResponseVO groupByCategory(String category, @PageableDefault(size = 5) Pageable pageable) {
+        return productService.categoryList(pageable, category);
     }
 
-    @GetMapping("search/{productName}/{category}/{page}")
-    public Page<ProductResponseVO> searchResultByCategory(@PathVariable String productName,
-                                                          @PathVariable String category,
-                                                          @PathVariable Integer page,
-                                                          @PageableDefault(page = 1, size = 5) Pageable pageable) {
+    @GetMapping("/search")
+    public ProductResponsePagingVO searchResultByCategory(String category,
+                                                          String title,
+                                                          @PageableDefault(size = 5) Pageable pageable) {
+        System.out.println("category = " + category);
+        System.out.println("pageable.getPageNumber() = " + pageable.getPageNumber());
+        System.out.println("title = " + title);
 
-        return productService.categoryAndSearch(pageable, productName, category);
+        return productService.categoryAndSearch(pageable, title, category);
     }
 }
