@@ -6,13 +6,17 @@ import com.example.finance7.cart.repository.CartRepository;
 import com.example.finance7.cart.service.CartService;
 import com.example.finance7.cart.vo.CartVO;
 import com.example.finance7.cart.vo.SimpleVO;
+import com.example.finance7.member.dto.MemberRequestDTO;
 import com.example.finance7.member.entity.Member;
+import com.example.finance7.member.repository.MemberRepository;
 import com.example.finance7.member.service.MemberService;
 import com.example.finance7.product.entity.*;
 import com.example.finance7.product.service.ProductService;
+import com.example.finance7.config.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +29,18 @@ public class CartServiceImpl implements CartService {
     private final ProductService productService;
     private final CartRepository cartRepository;
 
+    private final JwtProvider jwtProvider;
+
     /**
      * 장바구니 상품 추가
      * @param productId
      * @return
      */
     @Override
-    public SimpleVO addCart(Long productId) {
+    public SimpleVO addCart(Long productId, String header) {
         try {
-            Member member = memberService.findMemberByMemberId(1L);
+            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
             Product product = productService.findProductByProductId(productId);
             if(!cartRepository.existsByMemberAndProduct(member, product)) {
                 Cart item = Cart.builder()
@@ -59,8 +66,9 @@ public class CartServiceImpl implements CartService {
      * @return
      */
     @Override
-    public CartVO selectAllCartProducts() {
-        Member member = memberService.findMemberByMemberId(1L);
+    public CartVO selectAllCartProducts(String header) {
+        MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
         List<Cart> items = cartRepository.findCartsByMember(member);
         List<ProductResponseDTO> resultData = makeResultData(items);
         return CartVO.builder()
@@ -93,14 +101,17 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 장바구니 상품 삭제
+     *
      * @param productId
+     * @param header
      * @return
      */
     @Override
     @Transactional
-    public SimpleVO deleteItem(Long productId) {
+    public SimpleVO deleteItem(Long productId, String header) {
         try {
-            Member member = memberService.findMemberByMemberId(1L);
+            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
             Product product = productService.findProductByProductId(productId);
             if(cartRepository.existsByMemberAndProduct(member, product)) {
                 cartRepository.deleteCartByMemberAndProduct(member, product);
@@ -119,8 +130,9 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public DeleteResponseDTO deleteAllItems() {
-        Member member = memberService.findMemberByMemberId(1L);
+    public DeleteResponseDTO deleteAllItems(String header) {
+        MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
         int num = cartRepository.deleteByMember(member);
         return DeleteResponseDTO.builder()
                 .status("success")
