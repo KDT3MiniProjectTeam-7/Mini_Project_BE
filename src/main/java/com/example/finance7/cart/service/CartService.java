@@ -10,4 +10,7 @@ public interface CartService {
     SimpleVO addCart(Long productId);
 
     CartVO selectAllCartProducts();
+
+    SimpleVO deleteItem(Long productId);
+
 }
