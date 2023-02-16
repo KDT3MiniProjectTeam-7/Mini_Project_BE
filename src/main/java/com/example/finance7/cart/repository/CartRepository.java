@@ -14,4 +14,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     @EntityGraph(attributePaths = {"product"})
     List<Cart> findCartsByMember(Member member);
+
+    void deleteCartByMemberAndProduct(Member member, Product product);
 }
