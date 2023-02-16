@@ -1,6 +1,5 @@
 package com.example.finance7.member.dto;
 
-import com.sun.istack.NotNull;
 import lombok.*;
 
 @AllArgsConstructor
