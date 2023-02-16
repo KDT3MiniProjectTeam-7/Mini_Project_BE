@@ -116,4 +116,15 @@ public class CartServiceImpl implements CartService {
                 .status("success")
                 .build();
     }
+
+    @Override
+    @Transactional
+    public DeleteResponseDTO deleteAllItems() {
+        Member member = memberService.findMemberByMemberId(1L);
+        int num = cartRepository.deleteByMember(member);
+        return DeleteResponseDTO.builder()
+                .status("success")
+                .deletedNum(num)
+                .build();
+    }
 }
