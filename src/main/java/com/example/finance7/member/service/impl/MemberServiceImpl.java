@@ -30,32 +30,31 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> member = memberRepository.findByEmail(email);
         if (!member.isPresent()) {
             throw new NullPointerException("회원을 찾을 수 없습니다.");
-        }
-        else {
+        } else {
             return member.get();
         }
     }
 
     /**
      * 회원가입
+     *
      * @param memberRequestDTO
      * @return
      */
     @Override
     public MemberResponseDTO doRegister(MemberRequestDTO memberRequestDTO) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(memberRequestDTO.getEmail());
+        String email = memberRequestDTO.getEmail();
 
         try {
-            Member member = optionalMember.get();
-
-            if (isExistMember(member)){
+            if (isExistMember(email)) {
                 throw new NoSuchElementException("가입된 이메일입니다");
             }
 
             memberRequestDTO.setPassword(encodePassword(memberRequestDTO.getPassword()));
+            Member member = memberRequestDTO.toEntity();
 
-            return memberRepository.save(memberRequestDTO.toEntity()).toDTO("success", null);
-        }catch (NoSuchElementException e){
+            return memberRepository.save(member).toDTO("success", null);
+        } catch (NoSuchElementException e) {
             return MemberResponseDTO.builder()
                     .status("failed : 가입된 이메일입니다.")
                     .build();
@@ -64,6 +63,7 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * 로그아웃 redis 정보 삭제
+     *
      * @param accessToken
      * @return
      */
@@ -130,15 +130,15 @@ public class MemberServiceImpl implements MemberService {
      * @param member
      * @return Open : true , Close : false
      */
-    public boolean isOpenUser(Member member){
+    public boolean isOpenUser(Member member) {
         return member.getSecession().equals(Scession.OPEN);
     }
 
-    public boolean isExistMember(Member member){
-        return memberRepository.existsByEmail(member.getEmail());
+    public boolean isExistMember(String email) {
+        return memberRepository.existsByEmail(email);
     }
 
-    public String encodePassword(String password){
+    public String encodePassword(String password) {
         return passwordEncoder.encode(password);
     }
 
