@@ -38,9 +38,6 @@ public class ProductController {
     public ProductResponsePagingVO searchResultByCategory(String category,
                                                           String title,
                                                           @PageableDefault(size = 5) Pageable pageable) {
-        System.out.println("category = " + category);
-        System.out.println("pageable.getPageNumber() = " + pageable.getPageNumber());
-        System.out.println("title = " + title);
 
         return productService.categoryAndSearch(pageable, title, category);
     }
