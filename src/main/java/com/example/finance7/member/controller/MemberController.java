@@ -4,14 +4,11 @@ import com.example.finance7.member.service.impl.MemberServiceImpl;
 import com.example.finance7.member.vo.MemberVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
