@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CartService {
 
-    SimpleVO addCart(Long productId);
 
-    CartVO selectAllCartProducts();
+    CartVO selectAllCartProducts(String header);
 
-    SimpleVO deleteItem(Long productId);
+    SimpleVO deleteItem(Long productId, String header);
 
-    DeleteResponseDTO deleteAllItems();
+    DeleteResponseDTO deleteAllItems(String header);
+
+    SimpleVO addCart(Long productId, String header);
 }

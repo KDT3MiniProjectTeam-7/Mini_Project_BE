@@ -26,8 +26,8 @@ public class MemberServiceImpl implements MemberService {
     private final RedisTemplate redisTemplate;
 
     @Override
-    public Member findMemberByMemberId(Long memberId) {
-        Optional<Member> member = memberRepository.findById(memberId);
+    public Member findMemberByEmail(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
         if (!member.isPresent()) {
             throw new NullPointerException("회원을 찾을 수 없습니다.");
         }
