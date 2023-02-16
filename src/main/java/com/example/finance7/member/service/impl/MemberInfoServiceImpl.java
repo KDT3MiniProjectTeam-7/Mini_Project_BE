@@ -5,6 +5,7 @@ import com.example.finance7.member.dto.StatusResponse;
 import com.example.finance7.member.entity.Member;
 import com.example.finance7.member.repository.MemberRepository;
 import com.example.finance7.member.service.MemberInfoService;
+import com.example.finance7.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
