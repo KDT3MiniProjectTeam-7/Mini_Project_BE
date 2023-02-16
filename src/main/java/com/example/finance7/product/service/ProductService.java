@@ -1,6 +1,7 @@
 package com.example.finance7.product.service;
 
 import com.example.finance7.product.entity.Product;
+import com.example.finance7.product.vo.ProductResponsePagingVO;
 import com.example.finance7.product.vo.ProductResponseVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,18 +31,17 @@ public interface ProductService {
     /**
      * 카테고리별 상품 조회
      * @param pageable
-     * @param tagString
      * @return
      */
-    public Page<ProductResponseVO> categoryList(Pageable pageable, String tagString);
+    public ProductResponseVO categoryList(Pageable pageable, String category);
 
     /**
      * 카테고리별 검색결과 조회
      * @param pageable
-     * @param productName
+     * @param title
      * @return
      */
-    public Page<ProductResponseVO> categoryAndSearch(Pageable pageable,
-                                                     String productName,
+    public ProductResponsePagingVO categoryAndSearch(Pageable pageable,
+                                                     String title,
                                                      String category);
 }

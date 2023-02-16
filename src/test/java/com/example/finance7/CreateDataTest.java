@@ -14,6 +14,8 @@ import com.example.finance7.product.repository.SubscriptionRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -32,6 +34,10 @@ class CreateDataTest {
     LoanRepository loanRepository;
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Test
     void contextLoads() {
 
@@ -397,7 +403,7 @@ class CreateDataTest {
         List<Member> members = new ArrayList<>();
         Member member1 = Member.builder()
                 .email("member1@email.com")
-                .password("q1w2e3r4t5y6")
+                .password(passwordEncoder.encode("q1w2e3r4t5y6"))
                 .name("회원1")
                 .birthDay(Date.valueOf("1998-03-16"))
                 .secession(Scession.OPEN)
@@ -408,7 +414,7 @@ class CreateDataTest {
         members.add(member1);
         Member member2 = Member.builder()
                 .email("member2@email.com")
-                .password("q1w2e3r4t5y6")
+                .password(passwordEncoder.encode("q1w2e3r4t5y6"))
                 .name("회원2")
                 .birthDay(Date.valueOf("1993-12-26"))
                 .secession(Scession.CLOSE)
@@ -418,7 +424,7 @@ class CreateDataTest {
         members.add(member2);
         Member member3 = Member.builder()
                 .email("member3@email.com")
-                .password("q1w2e3r4t5y6")
+                .password(passwordEncoder.encode("q1w2e3r4t5y6"))
                 .name("회원3")
                 .birthDay(Date.valueOf("1988-06-23"))
                 .secession(Scession.OPEN)
@@ -428,7 +434,7 @@ class CreateDataTest {
         members.add(member3);
         Member member4 = Member.builder()
                 .email("member4@email.com")
-                .password("q1w2e3r4t5y6")
+                .password(passwordEncoder.encode("q1w2e3r4t5y6"))
                 .name("회원4")
                 .birthDay(Date.valueOf("2002-10-05"))
                 .secession(Scession.OPEN)

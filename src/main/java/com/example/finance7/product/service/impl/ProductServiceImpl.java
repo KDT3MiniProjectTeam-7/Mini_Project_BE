@@ -2,8 +2,9 @@ package com.example.finance7.product.service.impl;
 
 import com.example.finance7.product.dto.*;
 import com.example.finance7.product.entity.*;
-import com.example.finance7.product.repository.ProductRepository;
+import com.example.finance7.product.repository.*;
 import com.example.finance7.product.service.ProductService;
+import com.example.finance7.product.vo.ProductResponsePagingVO;
 import com.example.finance7.product.vo.ProductResponseVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,10 @@ import java.util.*;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CardRepository cardRepository;
+    private final LoanRepository loanRepository;
+    private final SavingsRepository savingsRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     @Override
     public Product findProductByProductId(Long productId) {
@@ -109,23 +114,87 @@ public class ProductServiceImpl implements ProductService {
     /**
      * 카테고리별 상품 조회
      * @param pageable
-     * @param tagString
      * @return
      */
     @Override
-    public Page<ProductResponseVO> categoryList(Pageable pageable, String tagString) {
+    public ProductResponseVO categoryList(Pageable pageable, String category) {
         return null;
     }
 
     /**
      * 카테고리별 검색결과 조회
      * @param pageable
-     * @param productName
+     * @param title
      * @param category
      * @return
      */
     @Override
-    public Page<ProductResponseVO> categoryAndSearch(Pageable pageable, String productName, String category) {
-        return null;
+    public ProductResponsePagingVO categoryAndSearch(Pageable pageable, String title, String category) {
+
+        List<ProductResponseDTO> pagingList = new ArrayList<>();
+        int totalPage = 0;
+        if (category == null || category.equals("")){
+            Page<Product> productList = productRepository.findAllByProductNameContaining(title,pageable);
+            totalPage = productList.getTotalPages();
+            pagingListAddProductResponseDTO(pagingList, productList);
+        }else if (category.equals("card")) {
+            Page<Product> cardList = cardRepository.findAllByProductNameContaining(title, pageable);
+            totalPage = cardList.getTotalPages();
+            pagingListAddProductResponseDTO(pagingList, cardList);
+        }else if (category.equals("loan")) {
+            Page<Product> loanList = loanRepository.findAllByProductNameContaining(title, pageable);
+            totalPage = loanList.getTotalPages();
+            pagingListAddProductResponseDTO(pagingList, loanList);
+        }else if (category.equals("savings")) {
+            Page<Product> savingsList = savingsRepository.findAllByProductNameContaining(title, pageable);
+            totalPage = savingsList.getTotalPages();
+            pagingListAddProductResponseDTO(pagingList, savingsList);
+        }else if (category.equals("subscription")) {
+            Page<Product> subscriptionList = subscriptionRepository.findAllByProductNameContaining(title, pageable);
+            totalPage = subscriptionList.getTotalPages();
+            pagingListAddProductResponseDTO(pagingList, subscriptionList);
+        }
+
+        return getProductResponsePagingVO(pageable, pagingList, totalPage);
     }
+
+    /**
+     * 검색결과가 있냐 없냐를 따져서 success failed 를 판별해주는 메서드 추출
+     * @param pageable
+     * @param pagingList
+     * @param totalPage
+     * @return
+     */
+    private ProductResponsePagingVO getProductResponsePagingVO(Pageable pageable,
+                                                               List<ProductResponseDTO> pagingList,
+                                                               int totalPage) {
+        if(pagingList.size() == 0){
+            return ProductResponsePagingVO.builder()
+                    .dataNum(pagingList.size())
+                    .status("failed 검색결과가 없습니다.")
+                    .build();
+
+        }else {
+            return ProductResponsePagingVO.builder()
+                    .dataNum(pagingList.size())
+                    .status("success")
+                    .resultData(pagingList)
+                    .currentPage(pageable.getPageNumber() + 1)
+                    .totalPage(totalPage)
+                    .build();
+        }
+    }
+
+    /**
+     * 중복되는 로직 메서드 추출
+     * @param pagingList
+     * @param productList
+     */
+    private void pagingListAddProductResponseDTO(List<ProductResponseDTO> pagingList, Page<Product> productList) {
+        for (Product product : productList) {
+            ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+            pagingList.add(productResponseDTO);
+        }
+    }
+
 }
