@@ -1,11 +1,10 @@
 package com.example.finance7.member.service.impl;
 
-import com.example.finance7.member.dto.SomeMemberInfoDto;
 import com.example.finance7.member.dto.SomeMemberUpdateInfoDto;
+import com.example.finance7.member.dto.StatusResponse;
 import com.example.finance7.member.entity.Member;
 import com.example.finance7.member.repository.MemberRepository;
 import com.example.finance7.member.service.MemberInfoService;
-import com.example.finance7.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,11 +45,18 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return 현재 로그인 중인 member의 email, name, age, tags 정보 반환 (dto)
      */
     @Override
-    public SomeMemberInfoDto findSomeMemberInfo() throws NullPointerException, NoSuchElementException {
-        Member member = findAllMemberInfo();
-        int age = calculateAge(member.getBirthDay());
+    public StatusResponse findSomeMemberInfo() {
+        try {
+            Member member = findAllMemberInfo();
+            int age = calculateAge(member.getBirthDay());
 
-        return member.toSomeMemberInfoDto(age);
+            return member.toSomeMemberInfoResponse("success", age);
+        } catch (NullPointerException | NoSuchElementException e) {
+            log.error(e.getMessage());
+
+            return makeStatusResponse("fail");
+        }
+
     }
 
     /**
@@ -98,5 +104,18 @@ public class MemberInfoServiceImpl implements MemberInfoService {
             return age;
         }
         return age - 1;
+    }
+
+    /**
+     * 상태 코드 response dto 생성
+     *
+     * @param status 상태 (String)
+     * @return 상태 정보 반환 (response dto)
+     */
+    @Override
+    public StatusResponse makeStatusResponse(String status) {
+        return StatusResponse.builder()
+                .status(status)
+                .build();
     }
 }
