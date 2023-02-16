@@ -12,6 +12,7 @@ import com.example.finance7.product.entity.*;
 import com.example.finance7.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,15 @@ public class CartServiceImpl implements CartService {
         try {
             Member member = memberService.findMemberByMemberId(1L);
             Product product = productService.findProductByProductId(productId);
-            duplicateCheck(member, product);
-            Cart item = Cart.builder()
-                    .member(member)
-                    .product(product)
-                    .build();
-            cartRepository.save(item);
+            if(!cartRepository.existsByMemberAndProduct(member, product)) {
+                Cart item = Cart.builder()
+                        .member(member)
+                        .product(product)
+                        .build();
+                cartRepository.save(item);
+            } else {
+                throw new Exception();
+            }
         } catch (Exception e) {
             return SimpleVO.builder()
                     .status("failed:장바구니 추가에 실패했습니다.")
@@ -48,18 +52,6 @@ public class CartServiceImpl implements CartService {
         return SimpleVO.builder()
                 .status("success")
                 .build();
-    }
-
-    /**
-     * 장바구니 상품 중복 체크
-     * @param member
-     * @param product
-     * @throws Exception
-     */
-    private void duplicateCheck(Member member, Product product) throws Exception{
-        if (cartRepository.existsByMemberAndProduct(member, product)) {
-            throw new Exception();
-        }
     }
 
     /**
@@ -97,5 +89,31 @@ public class CartServiceImpl implements CartService {
             }
         }
         return resultData;
+    }
+
+    /**
+     * 장바구니 상품 삭제
+     * @param productId
+     * @return
+     */
+    @Override
+    @Transactional
+    public SimpleVO deleteItem(Long productId) {
+        try {
+            Member member = memberService.findMemberByMemberId(1L);
+            Product product = productService.findProductByProductId(productId);
+            if(cartRepository.existsByMemberAndProduct(member, product)) {
+                cartRepository.deleteCartByMemberAndProduct(member, product);
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            return SimpleVO.builder()
+                    .status("failed:장바구니 삭제에 실패했습니다.")
+                    .build();
+        }
+        return SimpleVO.builder()
+                .status("success")
+                .build();
     }
 }
