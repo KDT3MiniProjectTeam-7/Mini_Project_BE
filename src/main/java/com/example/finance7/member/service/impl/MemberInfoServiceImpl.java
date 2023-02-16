@@ -66,13 +66,13 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return 회원정보 수정 성공 시 success, 실패 시 fail 반환 (String)
      */
     @Override
-    public String updateSomeMemberInfo(SomeMemberUpdateInfoDto memberUpdateInfoDto) {
+    public StatusResponse updateSomeMemberInfo(SomeMemberUpdateInfoDto memberUpdateInfoDto) {
         try {
             Member responseMember = findAllMemberInfo();
             Member requestMember = memberUpdateInfoDto.toEntityWithUpdate(responseMember);
 
             if (!memberService.isMatchPassword(requestMember, responseMember)) {
-                return "fail";
+                return makeStatusResponse("fail");
             }
 
             memberUpdateInfoDto.setNewPassword(memberService.encodePassword(memberUpdateInfoDto.getNewPassword()));
@@ -80,9 +80,9 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         } catch (NullPointerException | NoSuchElementException e) {
             log.error(e.getMessage());
 
-            return "fail";
+            return makeStatusResponse("fail");
         }
-        return "success";
+        return makeStatusResponse("success");
     }
 
     /**
