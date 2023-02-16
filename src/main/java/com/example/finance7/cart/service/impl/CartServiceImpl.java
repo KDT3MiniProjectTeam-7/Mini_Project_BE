@@ -91,6 +91,11 @@ public class CartServiceImpl implements CartService {
         return resultData;
     }
 
+    /**
+     * 장바구니 상품 삭제
+     * @param productId
+     * @return
+     */
     @Override
     @Transactional
     public SimpleVO deleteItem(Long productId) {
