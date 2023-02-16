@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Builder
 @Getter
@@ -17,8 +18,8 @@ public class MemberVO {
     String name;
     String password;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    Date birthDay;
-    String tags;
+    Date birth;
+    String[] tag;
 
     String accessToken;
 
@@ -31,8 +32,21 @@ public class MemberVO {
                 .email(email)
                 .name(name)
                 .password(password)
-                .birth(birthDay)
-                .tags(tags)
+                .birth(birth)
+                .tag(parseTagsString(tag))
                 .build();
+    }
+
+    public String parseTagsString(String[] tags){
+        if (Objects.isNull(tags)) return null;
+
+        StringBuilder tagString = new StringBuilder();
+
+        for (String tag : tags){
+            tagString.append(tag).append("&");
+        }
+        tagString.deleteCharAt(tagString.length()-1);
+
+        return tagString.toString();
     }
 }
