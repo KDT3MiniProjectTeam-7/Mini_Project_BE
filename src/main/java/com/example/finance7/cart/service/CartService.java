@@ -1,5 +1,6 @@
 package com.example.finance7.cart.service;
 
+import com.example.finance7.cart.dto.DeleteResponseDTO;
 import com.example.finance7.cart.vo.CartVO;
 import com.example.finance7.cart.vo.SimpleVO;
 import org.springframework.stereotype.Service;
@@ -13,4 +14,5 @@ public interface CartService {
 
     SimpleVO deleteItem(Long productId);
 
+    DeleteResponseDTO deleteAllItems();
 }
