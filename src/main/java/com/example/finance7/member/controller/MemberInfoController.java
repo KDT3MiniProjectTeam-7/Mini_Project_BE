@@ -3,6 +3,7 @@ package com.example.finance7.member.controller;
 import com.example.finance7.member.dto.SomeMemberUpdateInfoRequest;
 import com.example.finance7.member.dto.StatusResponse;
 import com.example.finance7.member.service.MemberInfoService;
+import com.example.finance7.member.vo.MemberSearchHistoryResponseVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -34,5 +35,10 @@ public class MemberInfoController {
     @PatchMapping("user")
     public StatusResponse updateSomeMemberInfo(@RequestBody SomeMemberUpdateInfoRequest memberUpdateInfoRequest) {
         return memberInfoService.updateSomeMemberInfo(memberUpdateInfoRequest.toDto());
+    }
+
+    @GetMapping("user/keywords")
+    public MemberSearchHistoryResponseVO selectRecentSearchKeyWords () {
+        return memberInfoService.selectRecentSearchKeyWords();
     }
 }

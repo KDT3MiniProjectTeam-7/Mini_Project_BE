@@ -2,16 +2,15 @@ package com.example.finance7.product.controller;
 
 import com.example.finance7.product.service.ProductService;
 import com.example.finance7.product.vo.ProductResponsePagingVO;
+import com.example.finance7.product.vo.ProductResponseRecommendationGroupByCategory;
 import com.example.finance7.product.vo.ProductResponseVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,13 +24,13 @@ public class ProductController {
     }
 
     @GetMapping("/Recommendation/{tagString}")
-    public ProductResponseVO recommendationProduct(@PathVariable String tagString) {
+    public ProductResponseRecommendationGroupByCategory recommendationProduct(@PathVariable String tagString) {
         return productService.recommendationProductsList(tagString);
     }
 
-    @GetMapping("/items/all")
-    public ProductResponseVO groupByCategory(String category, @PageableDefault(size = 5) Pageable pageable) {
-        return productService.categoryList(pageable, category);
+    @GetMapping("/items/all/{tagString}")
+    public ProductResponsePagingVO groupByCategory(String category,int page, @PathVariable String tagString) {
+        return productService.categoryList(category, page,tagString);
     }
 
     @GetMapping("/search")

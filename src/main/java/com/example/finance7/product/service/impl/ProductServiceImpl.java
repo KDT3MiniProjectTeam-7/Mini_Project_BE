@@ -5,9 +5,11 @@ import com.example.finance7.product.entity.*;
 import com.example.finance7.product.repository.*;
 import com.example.finance7.product.service.ProductService;
 import com.example.finance7.product.vo.ProductResponsePagingVO;
+import com.example.finance7.product.vo.ProductResponseRecommendationGroupByCategory;
 import com.example.finance7.product.vo.ProductResponseVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
+    private final int SIZE = 5;
     private final ProductRepository productRepository;
     private final CardRepository cardRepository;
     private final LoanRepository loanRepository;
@@ -72,22 +75,39 @@ public class ProductServiceImpl implements ProductService {
      * @return
      */
     @Override
-    public ProductResponseVO recommendationProductsList(String tagString) {
+    public ProductResponseRecommendationGroupByCategory recommendationProductsList(String tagString) {
         List<Product> products = productRepository.findAll();
 
         String[] tags = tagString.split("&");
         Map<Long, ProductResponseDTO> deduplication = deduplication(products, tags);
         List<ProductResponseDTO> result = new ArrayList<>(deduplication.values());
+        List<CardResponseDTO> card = new ArrayList<>();
+        List<LoanResponseDTO> loan = new ArrayList<>();
+        List<SavingResponseDTO> savings = new ArrayList<>();
+        List<SubscriptionResponseDTO> subscription = new ArrayList<>();
+
+        for (ProductResponseDTO productResponseDTO : result) {
+            if(productResponseDTO instanceof CardResponseDTO){
+                card.add((CardResponseDTO) productResponseDTO);
+            }else if(productResponseDTO instanceof LoanResponseDTO){
+                loan.add((LoanResponseDTO) productResponseDTO);
+            }else if (productResponseDTO instanceof SavingResponseDTO) {
+                savings.add((SavingResponseDTO) productResponseDTO);
+            }else {
+                subscription.add((SubscriptionResponseDTO) productResponseDTO);
+            }
+        }
         if (result.size() == 0){
-            return ProductResponseVO.builder()
-                    .dataNum(0)
+            return ProductResponseRecommendationGroupByCategory.builder()
                     .status("failed 검색결과가 없습니다.")
                     .build();
         } else {
-            return ProductResponseVO.builder()
-                    .dataNum(result.size())
+            return ProductResponseRecommendationGroupByCategory.builder()
                     .status("success")
-                    .resultData(result)
+                    .card(card)
+                    .loan(loan)
+                    .savings(savings)
+                    .subscription(subscription)
                     .build();
         }
     }
@@ -113,12 +133,163 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 카테고리별 상품 조회
-     * @param pageable
+     * @param page
      * @return
      */
     @Override
-    public ProductResponseVO categoryList(Pageable pageable, String category) {
-        return null;
+    public ProductResponsePagingVO categoryList(String category, int page, String tagString) {
+        PageRequest pageRequest = PageRequest.of(page - 1, SIZE);
+        String[] tags = tagString.split("&");
+        List<ProductResponseDTO> productResponseDTOList = new ArrayList<>();
+        int totalPage = 0;
+
+        if (category == null || category.equals("")){
+            if(tags.length == 1){
+                Page<Product> allByTagsContaining = productRepository.findAllByTagsContaining(tags[0], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else if(tags.length == 2){
+                Page<Product> allByTagsContaining = productRepository.findAllByTagsContainingOrTagsContaining(tags[0], tags[1], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else {
+                Page<Product> allByTagsContaining = productRepository.findAllByTagsContainingOrTagsContainingOrTagsContaining(tags[0], tags[1], tags[2], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }
+        }else if (category.equals("card")) {
+            if(tags.length == 1){
+                Page<Product> allByTagsContaining = cardRepository.findAllByTagsContaining(tags[0], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else if(tags.length == 2){
+                Page<Product> allByTagsContaining = cardRepository.findAllByTagsContainingOrTagsContaining(tags[0], tags[1], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else {
+                Page<Product> allByTagsContaining = cardRepository.findAllByTagsContainingOrTagsContainingOrTagsContaining(tags[0], tags[1], tags[2], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }
+
+        }else if (category.equals("loan")) {
+            if(tags.length == 1){
+                Page<Product> allByTagsContaining = loanRepository.findAllByTagsContaining(tags[0], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else if(tags.length == 2){
+                Page<Product> allByTagsContaining = loanRepository.findAllByTagsContainingOrTagsContaining(tags[0], tags[1], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else {
+                Page<Product> allByTagsContaining = loanRepository.findAllByTagsContainingOrTagsContainingOrTagsContaining(tags[0], tags[1], tags[2], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }
+
+        }else if (category.equals("savings")) {
+            if(tags.length == 1){
+                Page<Product> allByTagsContaining = savingsRepository.findAllByTagsContaining(tags[0], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else if(tags.length == 2){
+                Page<Product> allByTagsContaining = savingsRepository.findAllByTagsContainingOrTagsContaining(tags[0], tags[1], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else {
+                Page<Product> allByTagsContaining = savingsRepository.findAllByTagsContainingOrTagsContainingOrTagsContaining(tags[0], tags[1], tags[2], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }
+
+        }else if (category.equals("subscription")) {
+            if(tags.length == 1){
+                Page<Product> allByTagsContaining = subscriptionRepository.findAllByTagsContaining(tags[0], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else if(tags.length == 2){
+                Page<Product> allByTagsContaining = subscriptionRepository.findAllByTagsContainingOrTagsContaining(tags[0], tags[1], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }else {
+                Page<Product> allByTagsContaining = subscriptionRepository.findAllByTagsContainingOrTagsContainingOrTagsContaining(tags[0], tags[1], tags[2], pageRequest);
+                totalPage = allByTagsContaining.getTotalPages();
+                for (Product product : allByTagsContaining) {
+                    ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                    productResponseDTOList.add(productResponseDTO);
+                }
+            }
+
+        }
+        return getProductResponsePagingVO(page, productResponseDTOList, totalPage);
+    }
+
+    /**
+     * 데이터 결과가 있는지 없는지 반환 데이터 판별 메서드
+     * @param page
+     * @param productResponseDTOList
+     * @param totalPage
+     * @return
+     */
+    private ProductResponsePagingVO getProductResponsePagingVO(int page, List<ProductResponseDTO> productResponseDTOList, int totalPage) {
+        if(productResponseDTOList.size() == 0){
+            return ProductResponsePagingVO.builder()
+                    .dataNum(0)
+                    .status("failed 검색결과가 없습니다.")
+                    .build();
+
+        }else {
+            return ProductResponsePagingVO.builder()
+                    .dataNum(productResponseDTOList.size())
+                    .status("success")
+                    .currentPage(page)
+                    .totalPage(totalPage)
+                    .resultData(productResponseDTOList)
+                    .build();
+
+        }
     }
 
     /**
