@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-public class StatusResponse {
+public class StatusResponseDTO {
 
     protected String status;
 }
