@@ -126,6 +126,12 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                 .build();
     }
 
+    /**
+     * 최근 검색어 추가 서비스
+     * @param keyword
+     * @param header
+     * @return
+     */
     @Override
     @Transactional
     public StatusResponse addRecentKeyword(String keyword, String header) {
@@ -147,15 +153,26 @@ public class MemberInfoServiceImpl implements MemberInfoService {
             }
         } catch (Exception e) {
             return StatusResponse.builder()
-                    .status("failed : 장바구니 추가에 실패했습니다.")
+                    .status("failed : 최근 검색어 추가에 실패했습니다.")
                     .build();
         }
     }
 
+    /**
+     * 해당 유저의 최근 검색어 중에 중복된 데이터 여부 확인
+     * @param memberId
+     * @param searchContent
+     * @return
+     */
     private boolean checkDuplicate(Long memberId, String searchContent) {
         return searchHistoryRepository.existsByMemberIdAndSearchContent(memberId, searchContent);
     }
 
+    /**
+     * 한 회원당 최근 검색어 개수 10개 제한
+     * 넘어가면 가장 오래된 요소 삭제
+     * @param memberId
+     */
     private void checkElementsCount(Long memberId) {
         if (searchHistoryRepository.countByMemberId(memberId) >= 10) {
             Long historyId = searchHistoryRepository.findOldestElement(memberId);
