@@ -5,6 +5,7 @@ import com.example.finance7.product.entity.*;
 import com.example.finance7.product.repository.*;
 import com.example.finance7.product.service.ProductService;
 import com.example.finance7.product.vo.ProductResponsePagingVO;
+import com.example.finance7.product.vo.ProductResponseRecommendationGroupByCategory;
 import com.example.finance7.product.vo.ProductResponseVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -74,22 +75,39 @@ public class ProductServiceImpl implements ProductService {
      * @return
      */
     @Override
-    public ProductResponseVO recommendationProductsList(String tagString) {
+    public ProductResponseRecommendationGroupByCategory recommendationProductsList(String tagString) {
         List<Product> products = productRepository.findAll();
 
         String[] tags = tagString.split("&");
         Map<Long, ProductResponseDTO> deduplication = deduplication(products, tags);
         List<ProductResponseDTO> result = new ArrayList<>(deduplication.values());
+        List<CardResponseDTO> card = new ArrayList<>();
+        List<LoanResponseDTO> loan = new ArrayList<>();
+        List<SavingResponseDTO> savings = new ArrayList<>();
+        List<SubscriptionResponseDTO> subscription = new ArrayList<>();
+
+        for (ProductResponseDTO productResponseDTO : result) {
+            if(productResponseDTO instanceof CardResponseDTO){
+                card.add((CardResponseDTO) productResponseDTO);
+            }else if(productResponseDTO instanceof LoanResponseDTO){
+                loan.add((LoanResponseDTO) productResponseDTO);
+            }else if (productResponseDTO instanceof SavingResponseDTO) {
+                savings.add((SavingResponseDTO) productResponseDTO);
+            }else {
+                subscription.add((SubscriptionResponseDTO) productResponseDTO);
+            }
+        }
         if (result.size() == 0){
-            return ProductResponseVO.builder()
-                    .dataNum(0)
+            return ProductResponseRecommendationGroupByCategory.builder()
                     .status("failed 검색결과가 없습니다.")
                     .build();
         } else {
-            return ProductResponseVO.builder()
-                    .dataNum(result.size())
+            return ProductResponseRecommendationGroupByCategory.builder()
                     .status("success")
-                    .resultData(result)
+                    .card(card)
+                    .loan(loan)
+                    .savings(savings)
+                    .subscription(subscription)
                     .build();
         }
     }
