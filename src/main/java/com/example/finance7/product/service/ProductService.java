@@ -1,4 +1,4 @@
-package com.example.finance7.product.service;
+package com.example.finance7.product.repository.service;
 
 import com.example.finance7.product.entity.Product;
 import com.example.finance7.product.vo.ProductResponsePagingVO;
