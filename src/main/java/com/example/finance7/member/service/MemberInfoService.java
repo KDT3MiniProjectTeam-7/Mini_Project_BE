@@ -16,4 +16,6 @@ public interface MemberInfoService {
     int calculateAge(Date birthday);
 
     StatusResponse makeStatusResponse(String status);
+
+    StatusResponse addRecentKeyword(String keyword, String header);
 }
