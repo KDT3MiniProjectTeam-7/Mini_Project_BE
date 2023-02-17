@@ -73,8 +73,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     @Override
     public StatusResponseDTO updateMemberInfo(MemberInfoUpdateRequestDTO memberUpdateInfoDto, String header) {
         try {
-            Member responseMember = findAllMemberInfo();
-            Member requestMember = memberUpdateInfoDto.toEntityWithUpdate(responseMember);
+            Member responseMember = findMember(header);
+            Member requestMember = memberUpdateInfoDto.toEntity(responseMember);
 
             if (!memberService.isMatchPassword(requestMember, responseMember)) {
                 return makeStatusResponse("fail");
