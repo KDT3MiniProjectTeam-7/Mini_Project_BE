@@ -1,5 +1,6 @@
 package com.example.finance7.member.service;
 
+import com.example.finance7.member.dto.DeleteAllResponseDTO;
 import com.example.finance7.member.dto.SomeMemberUpdateInfoDto;
 import com.example.finance7.member.dto.StatusResponse;
 import com.example.finance7.member.entity.Member;
@@ -23,4 +24,7 @@ public interface MemberInfoService {
 
     MemberSearchHistoryResponseVO selectRecentSearchKeyWords();
 
+    StatusResponse deleteKeyword(Long searchId, String header);
+
+    DeleteAllResponseDTO deleteKeywordAll(String header);
 }

@@ -2,12 +2,8 @@ package com.example.finance7.member.service.impl;
 
 
 import com.example.finance7.config.JwtProvider;
-import com.example.finance7.member.dto.MemberRequestDTO;
-import com.example.finance7.member.dto.SomeMemberUpdateInfoDto;
-import com.example.finance7.member.dto.StatusResponse;
+import com.example.finance7.member.dto.*;
 import com.example.finance7.member.entity.Member;
-
-import com.example.finance7.member.dto.MemberSearchHistoryResponseDTO;
 
 import com.example.finance7.member.entity.Scession;
 
@@ -224,5 +220,37 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                     .build();
         }
 
+    }
+
+    @Override
+    public StatusResponse deleteKeyword(Long searchId, String header) {
+        try {
+            searchHistoryRepository.deleteById(searchId);
+            return StatusResponse.builder()
+                    .status("success")
+                    .build();
+        } catch (Exception e) {
+            return StatusResponse.builder()
+                    .status("failed: 검색 내역 삭제에 실패했습니다.")
+                    .build();
+        }
+    }
+
+    @Override
+    @Transactional
+    public DeleteAllResponseDTO deleteKeywordAll(String header) {
+        try {
+            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            int deletedNum = searchHistoryRepository.deleteByMemberId(member.getMemberId());
+            return DeleteAllResponseDTO.builder()
+                    .status("success")
+                    .deletedNum(deletedNum)
+                    .build();
+        } catch (Exception e) {
+            return DeleteAllResponseDTO.builder()
+                    .status("failed: 검색 내역 삭제에 실패했습니다.")
+                    .build();
+        }
     }
 }

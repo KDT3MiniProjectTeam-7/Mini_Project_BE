@@ -20,7 +20,10 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
     @Modifying
     @Query("delete from SearchHistory s where s.historyId = :historyId")
     void deleteOldestElement(@Param("historyId") Long historyId);
-
     List<SearchHistory> findAllByMemberId(Long memberId);
+
+    @Modifying
+    @Query("delete from SearchHistory s where s.memberId = :memberId")
+    int deleteByMemberId(@Param("memberId") Long memberId);
 
 }
