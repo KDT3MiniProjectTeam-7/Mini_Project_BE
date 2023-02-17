@@ -1,15 +1,20 @@
 package com.example.finance7.member.service.impl;
 
+import com.example.finance7.config.JwtProvider;
+import com.example.finance7.member.dto.MemberRequestDTO;
 import com.example.finance7.member.dto.SomeMemberUpdateInfoDto;
 import com.example.finance7.member.dto.StatusResponse;
 import com.example.finance7.member.entity.Member;
+import com.example.finance7.member.entity.SearchHistory;
 import com.example.finance7.member.repository.MemberRepository;
+import com.example.finance7.member.repository.SearchHistoryRepository;
 import com.example.finance7.member.service.MemberInfoService;
 import com.example.finance7.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -22,7 +27,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
     private final MemberRepository memberRepository;
     private final MemberServiceImpl memberService;
-
+    private final JwtProvider jwtProvider;
+    private final SearchHistoryRepository searchHistoryRepository;
     /**
      *전체 회원정보를 조회한다.
      *
@@ -118,5 +124,42 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return StatusResponse.builder()
                 .status(status)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public StatusResponse addRecentKeyword(String keyword, String header) {
+        try {
+            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            if (!checkDuplicate(member.getMemberId(), keyword)) {
+                checkElementsCount(member.getMemberId());
+                SearchHistory searchHistory = SearchHistory.builder()
+                        .memberId(member.getMemberId())
+                        .searchContent(keyword)
+                        .build();
+                searchHistoryRepository.save(searchHistory);
+                return StatusResponse.builder()
+                        .status("success")
+                        .build();
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            return StatusResponse.builder()
+                    .status("failed : 장바구니 추가에 실패했습니다.")
+                    .build();
+        }
+    }
+
+    private boolean checkDuplicate(Long memberId, String searchContent) {
+        return searchHistoryRepository.existsByMemberIdAndSearchContent(memberId, searchContent);
+    }
+
+    private void checkElementsCount(Long memberId) {
+        if (searchHistoryRepository.countByMemberId(memberId) >= 10) {
+            Long historyId = searchHistoryRepository.findOldestElement(memberId);
+            searchHistoryRepository.deleteOldestElement(historyId);
+        }
     }
 }
