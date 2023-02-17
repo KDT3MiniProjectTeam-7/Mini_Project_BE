@@ -2,6 +2,7 @@ package com.example.finance7.product.controller;
 
 import com.example.finance7.product.service.ProductService;
 import com.example.finance7.product.vo.ProductResponsePagingVO;
+import com.example.finance7.product.vo.ProductResponseRecommendationGroupByCategory;
 import com.example.finance7.product.vo.ProductResponseVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,7 @@ public class ProductController {
     }
 
     @GetMapping("/Recommendation/{tagString}")
-    public ProductResponseVO recommendationProduct(@PathVariable String tagString) {
+    public ProductResponseRecommendationGroupByCategory recommendationProduct(@PathVariable String tagString) {
         return productService.recommendationProductsList(tagString);
     }
 

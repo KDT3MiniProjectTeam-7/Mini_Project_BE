@@ -2,6 +2,7 @@ package com.example.finance7.product.service;
 
 import com.example.finance7.product.entity.Product;
 import com.example.finance7.product.vo.ProductResponsePagingVO;
+import com.example.finance7.product.vo.ProductResponseRecommendationGroupByCategory;
 import com.example.finance7.product.vo.ProductResponseVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ public interface ProductService {
      * @param tagString
      * @return
      */
-    public ProductResponseVO recommendationProductsList(String tagString);
+    public ProductResponseRecommendationGroupByCategory recommendationProductsList(String tagString);
 
     /**
      * 카테고리별 태그 조회
