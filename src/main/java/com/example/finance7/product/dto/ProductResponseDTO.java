@@ -25,7 +25,7 @@ public class ProductResponseDTO {
 
         if (product instanceof Card){
             return CardResponseDTO.builder()
-                    .category("CARD")
+                    .category("card")
                     .productId(product.getProductId())
                     .productName(product.getProductName())
                     .companyName(product.getCompanyName())
@@ -37,7 +37,7 @@ public class ProductResponseDTO {
 
         } else if (product instanceof Loan) {
             return LoanResponseDTO.builder()
-                    .category("LOAN")
+                    .category("loan")
                     .productId(product.getProductId())
                     .productName(product.getProductName())
                     .companyName(product.getCompanyName())
@@ -52,7 +52,7 @@ public class ProductResponseDTO {
         } else if (product instanceof Savings) {
 
             return SavingResponseDTO.builder()
-                    .category("SAVINGS")
+                    .category("savings")
                     .productId(product.getProductId())
                     .productName(product.getProductName())
                     .companyName(product.getCompanyName())
@@ -67,7 +67,7 @@ public class ProductResponseDTO {
             Subscription subscription = (Subscription) product;
             return SubscriptionResponseDTO.builder()
                     .productId(product.getProductId())
-                    .category("SUBSCRIPTION")
+                    .category("subscription")
                     .productName(product.getProductName())
                     .companyName(product.getCompanyName())
                     .companyImage(product.getCompanyImage())

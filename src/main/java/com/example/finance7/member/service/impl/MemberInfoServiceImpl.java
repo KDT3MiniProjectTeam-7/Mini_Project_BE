@@ -1,24 +1,29 @@
 package com.example.finance7.member.service.impl;
 
+
 import com.example.finance7.config.JwtProvider;
 import com.example.finance7.member.dto.MemberRequestDTO;
 import com.example.finance7.member.dto.SomeMemberUpdateInfoDto;
 import com.example.finance7.member.dto.StatusResponse;
 import com.example.finance7.member.entity.Member;
+
+import com.example.finance7.member.dto.MemberSearchHistoryResponseDTO;
+
+import com.example.finance7.member.entity.Scession;
+
 import com.example.finance7.member.entity.SearchHistory;
 import com.example.finance7.member.repository.MemberRepository;
 import com.example.finance7.member.repository.SearchHistoryRepository;
 import com.example.finance7.member.service.MemberInfoService;
 import com.example.finance7.member.service.MemberService;
+import com.example.finance7.member.vo.MemberSearchHistoryResponseVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,8 +32,10 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
     private final MemberRepository memberRepository;
     private final MemberServiceImpl memberService;
+
     private final JwtProvider jwtProvider;
     private final SearchHistoryRepository searchHistoryRepository;
+
     /**
      *전체 회원정보를 조회한다.
      *
@@ -178,5 +185,44 @@ public class MemberInfoServiceImpl implements MemberInfoService {
             Long historyId = searchHistoryRepository.findOldestElement(memberId);
             searchHistoryRepository.deleteOldestElement(historyId);
         }
+    }
+
+     /** 해당 멤버가 최근 검색한 내역 모두 출력하는 메서드
+     * @return
+     */
+    @Override
+    public MemberSearchHistoryResponseVO selectRecentSearchKeyWords() {
+
+        try {
+            Member member = memberRepository.findById(1L).orElseThrow(
+                    () -> new NoSuchElementException("존재하지 않는 회원입니다.")
+            );
+            if (member.getSecession().equals(Scession.CLOSE)) {
+                throw new RuntimeException("탈되한 회원입니다.");
+            }
+            Long memberId = member.getMemberId();
+            List<SearchHistory> searchHistoryAllByMemberId = searchHistoryRepository.findAllByMemberId(memberId);
+            List<MemberSearchHistoryResponseDTO> memberSearchHistoryResponseDTOList = new ArrayList<>();
+            for (SearchHistory searchHistory : searchHistoryAllByMemberId) {
+                MemberSearchHistoryResponseDTO memberSearchHistoryResponseDTO = MemberSearchHistoryResponseDTO.builder()
+                        .searchId(searchHistory.getHistoryId())
+                        .searchContent(searchHistory.getSearchContent())
+                        .createdAt(searchHistory.getRegisterDate().toString())
+                        .build();
+                memberSearchHistoryResponseDTOList.add(memberSearchHistoryResponseDTO);
+            }
+            return MemberSearchHistoryResponseVO.builder()
+                    .status("success")
+                    .dataNum(memberSearchHistoryResponseDTOList.size())
+                    .resultData(memberSearchHistoryResponseDTOList)
+                    .build();
+
+        }catch (RuntimeException e) {
+
+            return MemberSearchHistoryResponseVO.builder()
+                    .status("failed" + e.getMessage())
+                    .build();
+        }
+
     }
 }

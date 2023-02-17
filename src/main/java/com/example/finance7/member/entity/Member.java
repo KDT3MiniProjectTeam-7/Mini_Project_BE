@@ -43,9 +43,10 @@ public class Member {
     @Column(name = "SIGNUP_DATE", columnDefinition = "DATETIME")
     private LocalDateTime signUpDate;
 
+    @Builder.Default
     @Column( name = "SECESSION", columnDefinition = "VARCHAR(255) DEFAULT 'OPEN'")
     @Enumerated(EnumType.STRING)
-    private Scession secession;
+    private Scession secession = Scession.OPEN;
 
     @Column(name = "TAGS", columnDefinition = "TEXT")
     private String tags;
@@ -77,7 +78,7 @@ public class Member {
                 .status(status)
                 .email(email)
                 .name(name)
-                .tags(tags)
+                .tag(tags)
                 .accessToken(accessToken)
                 .build();
     }
