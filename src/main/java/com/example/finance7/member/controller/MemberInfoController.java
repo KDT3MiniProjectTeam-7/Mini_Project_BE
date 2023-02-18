@@ -13,30 +13,29 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/")
 public class MemberInfoController {
 
     private final MemberInfoService memberInfoService;
 
     /**
-     * 일부 회원정보를 조회한다.
+     * 회원 정보 조회
      *
-     * @return 현재 로그인 중인 member email, name, age, tags 정보와 status 정보 반환 (response dto)
+     * @return email, name, age, tags 정보와 status 정보 반환 (response dto)
      */
-    @GetMapping("user")
-    public StatusResponse findSomeMemberInfo() {
-        return memberInfoService.findSomeMemberInfo();
+    @GetMapping("/user")
+    public StatusResponseDTO findMemberInfo(HttpServletRequest request) {
+        return memberInfoService.findMemberInfo(request.getHeader(HttpHeaders.AUTHORIZATION));
     }
 
     /**
-     * 회원정보를 수정한다.
+     * 회원 정보 수정
      *
-     * @param memberUpdateInfoRequest 변경할 회원정보 값 (request dto)
+     * @param updateRequest 변경할 회원 정보 값 (request dto)
      * @return status 정보 반환 (response dto)
      */
-    @PatchMapping("user")
-    public StatusResponse updateSomeMemberInfo(@RequestBody SomeMemberUpdateInfoRequest memberUpdateInfoRequest) {
-        return memberInfoService.updateSomeMemberInfo(memberUpdateInfoRequest.toDto());
+    @PatchMapping("/user")
+    public StatusResponseDTO updateMemberInfo(@RequestBody MemberInfoUpdateRequestDTO updateRequest, HttpServletRequest request) {
+        return memberInfoService.updateMemberInfo(updateRequest, request.getHeader(HttpHeaders.AUTHORIZATION));
     }
 
 

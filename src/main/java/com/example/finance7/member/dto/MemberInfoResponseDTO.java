@@ -8,7 +8,10 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-public class StatusResponse {
+public class MemberInfoResponseDTO extends StatusResponseDTO {
 
-    protected String status;
+    private String email;
+    private String name;
+    private int age;
+    private String tags;
 }
