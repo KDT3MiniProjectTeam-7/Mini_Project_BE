@@ -1,12 +1,12 @@
 package com.example.finance7.member.service.impl;
 
+
 import com.example.finance7.config.JwtProvider;
-import com.example.finance7.member.dto.MemberInfoUpdateRequestDTO;
-import com.example.finance7.member.dto.MemberRequestDTO;
-import com.example.finance7.member.dto.MemberSearchHistoryResponseDTO;
-import com.example.finance7.member.dto.StatusResponseDTO;
+import com.example.finance7.member.dto.*;
 import com.example.finance7.member.entity.Member;
+
 import com.example.finance7.member.entity.Scession;
+
 import com.example.finance7.member.entity.SearchHistory;
 import com.example.finance7.member.repository.MemberRepository;
 import com.example.finance7.member.repository.SearchHistoryRepository;
@@ -15,6 +15,7 @@ import com.example.finance7.member.vo.MemberSearchHistoryResponseVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -25,6 +26,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
     private final MemberRepository memberRepository;
     private final MemberServiceImpl memberService;
+
+    private final JwtProvider jwtProvider;
     private final SearchHistoryRepository searchHistoryRepository;
     private final JwtProvider jwtProvider;
 
@@ -124,7 +127,60 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     }
 
     /**
-     * 해당 멤버가 최근 검색한 내역 모두 출력하는 메서드
+     * 최근 검색어 추가 서비스
+     * @param keyword
+     * @param header
+     * @return
+     */
+    @Override
+    @Transactional
+    public StatusResponse addRecentKeyword(String keyword, String header) {
+        try {
+            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            if (!checkDuplicate(member.getMemberId(), keyword)) {
+                checkElementsCount(member.getMemberId());
+                SearchHistory searchHistory = SearchHistory.builder()
+                        .memberId(member.getMemberId())
+                        .searchContent(keyword)
+                        .build();
+                searchHistoryRepository.save(searchHistory);
+                return StatusResponse.builder()
+                        .status("success")
+                        .build();
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            return StatusResponse.builder()
+                    .status("failed : 최근 검색어 추가에 실패했습니다.")
+                    .build();
+        }
+    }
+
+    /**
+     * 해당 유저의 최근 검색어 중에 중복된 데이터 여부 확인
+     * @param memberId
+     * @param searchContent
+     * @return
+     */
+    private boolean checkDuplicate(Long memberId, String searchContent) {
+        return searchHistoryRepository.existsByMemberIdAndSearchContent(memberId, searchContent);
+    }
+
+    /**
+     * 한 회원당 최근 검색어 개수 10개 제한
+     * 넘어가면 가장 오래된 요소 삭제
+     * @param memberId
+     */
+    private void checkElementsCount(Long memberId) {
+        if (searchHistoryRepository.countByMemberId(memberId) >= 10) {
+            Long historyId = searchHistoryRepository.findOldestElement(memberId);
+            searchHistoryRepository.deleteOldestElement(historyId);
+        }
+    }
+
+     /** 해당 멤버가 최근 검색한 내역 모두 출력하는 메서드
      * @return
      */
     @Override
@@ -161,5 +217,37 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                     .build();
         }
 
+    }
+
+    @Override
+    public StatusResponse deleteKeyword(Long searchId, String header) {
+        try {
+            searchHistoryRepository.deleteById(searchId);
+            return StatusResponse.builder()
+                    .status("success")
+                    .build();
+        } catch (Exception e) {
+            return StatusResponse.builder()
+                    .status("failed: 검색 내역 삭제에 실패했습니다.")
+                    .build();
+        }
+    }
+
+    @Override
+    @Transactional
+    public DeleteAllResponseDTO deleteKeywordAll(String header) {
+        try {
+            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            int deletedNum = searchHistoryRepository.deleteByMemberId(member.getMemberId());
+            return DeleteAllResponseDTO.builder()
+                    .status("success")
+                    .deletedNum(deletedNum)
+                    .build();
+        } catch (Exception e) {
+            return DeleteAllResponseDTO.builder()
+                    .status("failed: 검색 내역 삭제에 실패했습니다.")
+                    .build();
+        }
     }
 }
