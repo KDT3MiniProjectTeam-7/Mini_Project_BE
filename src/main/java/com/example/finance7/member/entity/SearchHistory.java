@@ -34,8 +34,4 @@ public class SearchHistory {
     @CreatedDate
     @Column(name = "REGISTER_DATE", columnDefinition = "DATETIME",  nullable = false)
     private LocalDateTime registerDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
-    private Product product;
 }
