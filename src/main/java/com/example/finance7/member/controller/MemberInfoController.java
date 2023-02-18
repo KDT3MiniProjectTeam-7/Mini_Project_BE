@@ -40,17 +40,17 @@ public class MemberInfoController {
 
 
     @PostMapping("user/keywords")
-    public StatusResponse selectAllrecentKewords(@RequestBody KeywordRequest keywordRequest, HttpServletRequest request) {
+    public StatusResponseDTO selectAllrecentKewords(@RequestBody KeywordRequest keywordRequest, HttpServletRequest request) {
         return memberInfoService.addRecentKeyword(keywordRequest.getSearchContent(), request.getHeader(HttpHeaders.AUTHORIZATION));
     }
 
     @GetMapping("user/keywords")
-    public MemberSearchHistoryResponseVO selectRecentSearchKeyWords() {
-        return memberInfoService.selectRecentSearchKeyWords();
+    public MemberSearchHistoryResponseVO selectRecentSearchKeyWords(HttpServletRequest request) {
+        return memberInfoService.selectRecentSearchKeyWords(request.getHeader(HttpHeaders.AUTHORIZATION));
     }
 
     @DeleteMapping("user/keywords")
-    public StatusResponse deleteKeyword(@RequestBody DeleteKeywordRequestDTO deleteKeywordRequest, HttpServletRequest request) {
+    public StatusResponseDTO deleteKeyword(@RequestBody DeleteKeywordRequestDTO deleteKeywordRequest, HttpServletRequest request) {
         return memberInfoService.deleteKeyword(deleteKeywordRequest.getSearchId(), request.getHeader(HttpHeaders.AUTHORIZATION));
     }
 

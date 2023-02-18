@@ -29,7 +29,6 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
     private final JwtProvider jwtProvider;
     private final SearchHistoryRepository searchHistoryRepository;
-    private final JwtProvider jwtProvider;
 
     /**
      * 회원 조회
@@ -134,7 +133,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      */
     @Override
     @Transactional
-    public StatusResponse addRecentKeyword(String keyword, String header) {
+    public StatusResponseDTO addRecentKeyword(String keyword, String header) {
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
             Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
@@ -145,14 +144,14 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                         .searchContent(keyword)
                         .build();
                 searchHistoryRepository.save(searchHistory);
-                return StatusResponse.builder()
+                return StatusResponseDTO.builder()
                         .status("success")
                         .build();
             } else {
                 throw new Exception();
             }
         } catch (Exception e) {
-            return StatusResponse.builder()
+            return StatusResponseDTO.builder()
                     .status("failed : 최근 검색어 추가에 실패했습니다.")
                     .build();
         }
@@ -184,12 +183,11 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
-    public MemberSearchHistoryResponseVO selectRecentSearchKeyWords() {
+    public MemberSearchHistoryResponseVO selectRecentSearchKeyWords(String header) {
 
         try {
-            Member member = memberRepository.findById(1L).orElseThrow(
-                    () -> new NoSuchElementException("존재하지 않는 회원입니다.")
-            );
+            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
             if (member.getSecession().equals(Scession.CLOSE)) {
                 throw new RuntimeException("탈되한 회원입니다.");
             }
@@ -220,14 +218,14 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     }
 
     @Override
-    public StatusResponse deleteKeyword(Long searchId, String header) {
+    public StatusResponseDTO deleteKeyword(Long searchId, String header) {
         try {
             searchHistoryRepository.deleteById(searchId);
-            return StatusResponse.builder()
+            return StatusResponseDTO.builder()
                     .status("success")
                     .build();
         } catch (Exception e) {
-            return StatusResponse.builder()
+            return StatusResponseDTO.builder()
                     .status("failed: 검색 내역 삭제에 실패했습니다.")
                     .build();
         }
