@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+iml,gradle,java,vim,git
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows,intellij+iml,gradle,java,vim,git
 
+
+
 ### Git ###
 # Created by git for backups. To disable backups in Git:
 # $ git config --global mergetool.keepBackup false
@@ -236,4 +238,10 @@ gradle-app.setting
 # Java heap dump
 *.hprof
 
+
+# config
+src/main/java/com/example/finance7/config/
+
+#application.properties
+src/main/resources/application.properties
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+iml,gradle,java,vim,git
