@@ -1,12 +1,14 @@
 package com.example.finance7.member.controller;
 
-import com.example.finance7.member.dto.SomeMemberUpdateInfoRequest;
-import com.example.finance7.member.dto.StatusResponse;
+import com.example.finance7.member.dto.*;
 import com.example.finance7.member.service.MemberInfoService;
 import com.example.finance7.member.vo.MemberSearchHistoryResponseVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,8 +39,24 @@ public class MemberInfoController {
         return memberInfoService.updateSomeMemberInfo(memberUpdateInfoRequest.toDto());
     }
 
+
+    @PostMapping("user/keywords")
+    public StatusResponse selectAllrecentKewords(@RequestBody KeywordRequest keywordRequest, HttpServletRequest request) {
+        return memberInfoService.addRecentKeyword(keywordRequest.getSearchContent(), request.getHeader(HttpHeaders.AUTHORIZATION));
+    }
+
     @GetMapping("user/keywords")
-    public MemberSearchHistoryResponseVO selectRecentSearchKeyWords () {
+    public MemberSearchHistoryResponseVO selectRecentSearchKeyWords() {
         return memberInfoService.selectRecentSearchKeyWords();
+    }
+
+    @DeleteMapping("user/keywords")
+    public StatusResponse deleteKeyword(@RequestBody DeleteKeywordRequestDTO deleteKeywordRequest, HttpServletRequest request) {
+        return memberInfoService.deleteKeyword(deleteKeywordRequest.getSearchId(), request.getHeader(HttpHeaders.AUTHORIZATION));
+    }
+
+    @DeleteMapping("user/keywords/all")
+    public DeleteAllResponseDTO deleteKeyword(HttpServletRequest request) {
+        return memberInfoService.deleteKeywordAll(request.getHeader(HttpHeaders.AUTHORIZATION));
     }
 }

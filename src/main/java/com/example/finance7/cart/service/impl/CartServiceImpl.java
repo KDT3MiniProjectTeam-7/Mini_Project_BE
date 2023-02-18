@@ -28,7 +28,6 @@ public class CartServiceImpl implements CartService {
     private final MemberService memberService;
     private final ProductService productService;
     private final CartRepository cartRepository;
-
     private final JwtProvider jwtProvider;
 
     /**
