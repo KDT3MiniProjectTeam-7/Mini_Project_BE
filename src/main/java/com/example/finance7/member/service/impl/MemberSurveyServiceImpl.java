@@ -32,7 +32,7 @@ public class MemberSurveyServiceImpl implements MemberSurveyService {
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
             Member member = memberRepository.findByEmail(memberRequestDTO.getEmail()).orElseThrow(
-                    () -> new NoSuchElementException("존재하지 않는 회웝입니다.")
+                    () -> new NoSuchElementException("존재하지 않는 회원입니다.")
             );
             if (member.getSecession().equals(Scession.CLOSE)) {
                 throw new RuntimeException("탈퇴한 회원입니다.");
