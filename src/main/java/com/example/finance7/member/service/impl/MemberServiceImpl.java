@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -50,10 +51,19 @@ public class MemberServiceImpl implements MemberService {
                 throw new NoSuchElementException("가입된 이메일입니다");
             }
 
-            memberRequestDTO.setPassword(encodePassword(memberRequestDTO.getPassword()));
-            Member member = memberRequestDTO.toEntity();
+            if (!Objects.isNull(memberRequestDTO.getPassword())){
+                memberRequestDTO.setPassword(encodePassword(memberRequestDTO.getPassword()));
+                Member member = memberRequestDTO.toEntity();
 
-            return memberRepository.save(member).toDTO("success", null);
+                return memberRepository.save(member).toDTO("success", null);
+            }
+            else {
+                return MemberResponseDTO.builder()
+                        .status("success : 가입 가능한 이메일입니다")
+                        .build();
+            }
+
+
         } catch (NoSuchElementException e) {
             return MemberResponseDTO.builder()
                     .status("failed : 가입된 이메일입니다.")
