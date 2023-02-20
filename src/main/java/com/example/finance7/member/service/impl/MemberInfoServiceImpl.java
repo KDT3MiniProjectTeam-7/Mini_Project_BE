@@ -189,7 +189,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
             Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
             if (member.getSecession().equals(Scession.CLOSE)) {
-                throw new RuntimeException("탈되한 회원입니다.");
+                throw new RuntimeException("탈퇴한 회원입니다.");
             }
             Long memberId = member.getMemberId();
             List<SearchHistory> searchHistoryAllByMemberId = searchHistoryRepository.findAllByMemberId(memberId);
