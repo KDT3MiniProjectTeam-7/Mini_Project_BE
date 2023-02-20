@@ -2,6 +2,10 @@ package com.example.finance7.member.dto;
 
 import com.example.finance7.member.vo.MemberVO;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
+import java.util.Objects;
 
 @Builder
 @Getter
@@ -15,10 +19,12 @@ public class MemberResponseDTO {
     String email;
     String name;
     String password;
-    String birthDay;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    Date birth;
     String signUpDate;
     String secession;
-    String tags;
+    String tag;
 
     String accessToken;
 
@@ -32,8 +38,19 @@ public class MemberResponseDTO {
                 .status(status)
                 .email(email)
                 .name(name)
-                .tags(tags)
+                .tag(parseTagStrings(tag))
                 .accessToken(accessToken)
                 .build();
+    }
+
+    /**
+     * String tag 를 '&' 기준으로 String[] 로 생성
+     * @param tagString
+     * @return
+     */
+    public String[] parseTagStrings(String tagString) {
+        if (Objects.isNull(tagString)) return null;
+
+        return tagString.split("&");
     }
 }

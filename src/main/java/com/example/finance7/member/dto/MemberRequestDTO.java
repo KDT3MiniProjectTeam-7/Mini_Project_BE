@@ -19,7 +19,7 @@ public class MemberRequestDTO {
     String password;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date birth;
-    String tags;
+    String tag;
 
     public Member toEntity(){
         return Member.builder()
@@ -27,7 +27,7 @@ public class MemberRequestDTO {
                 .name(name)
                 .password(password)
                 .birthDay(birth)
-                .tags(tags)
+                .tags(tag)
                 .build();
     }
 
