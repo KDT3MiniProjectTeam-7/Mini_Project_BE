@@ -5,9 +5,7 @@ import com.example.finance7.config.JwtProvider;
 import com.example.finance7.member.dto.MemberRequestDTO;
 import com.example.finance7.member.dto.StatusResponseDTO;
 import com.example.finance7.member.entity.Member;
-import com.example.finance7.member.entity.Scession;
 import com.example.finance7.member.repository.MemberRepository;
-import com.example.finance7.member.service.MemberService;
 import com.example.finance7.member.service.MemberSurveyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
+import static com.example.finance7.member.entity.Scession.CLOSE;
+
 @Service
 @RequiredArgsConstructor
 public class MemberSurveyServiceImpl implements MemberSurveyService {
 
     private final JwtProvider jwtProvider;
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
 
     /**
@@ -31,13 +31,18 @@ public class MemberSurveyServiceImpl implements MemberSurveyService {
     public StatusResponseDTO enterMemberTags(String[] tags, String header) {
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            Member member = memberRepository.findByEmail(memberRequestDTO.getEmail()).orElseThrow(
+                    () -> new NoSuchElementException("존재하지 않는 회원입니다.")
+            );
+            if(member.getSecession().equals(CLOSE)){
+                throw new RuntimeException("탈퇴한 회원입니다.");
+            }
             String tagString = ArrayToString(tags);
             member.insertTagString(tagString);
             return StatusResponseDTO.builder().status("success").build();
 
         }catch (Exception e){
-            return StatusResponseDTO.builder().status("failed " + e).build();
+            return StatusResponseDTO.builder().status("failed " + e.getMessage()).build();
         }
     }
 
