@@ -7,6 +7,7 @@ import com.example.finance7.member.dto.StatusResponseDTO;
 import com.example.finance7.member.entity.Member;
 import com.example.finance7.member.entity.Scession;
 import com.example.finance7.member.repository.MemberRepository;
+import com.example.finance7.member.service.MemberService;
 import com.example.finance7.member.service.MemberSurveyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,8 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class MemberSurveyServiceImpl implements MemberSurveyService {
 
-    private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
+    private final MemberService memberService;
 
 
     /**
@@ -28,22 +29,15 @@ public class MemberSurveyServiceImpl implements MemberSurveyService {
     @Override
     @Transactional
     public StatusResponseDTO enterMemberTags(String[] tags, String header) {
-
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberRepository.findByEmail(memberRequestDTO.getEmail()).orElseThrow(
-                    () -> new NoSuchElementException("존재하지 않는 회원입니다.")
-            );
-            if (member.getSecession().equals(Scession.CLOSE)) {
-                throw new RuntimeException("탈퇴한 회원입니다.");
-            }
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
             String tagString = ArrayToString(tags);
             member.insertTagString(tagString);
-            memberRepository.save(member);
             return StatusResponseDTO.builder().status("success").build();
 
         }catch (Exception e){
-            return StatusResponseDTO.builder().status("failed" + e.getMessage()).build();
+            return StatusResponseDTO.builder().status("failed " + e).build();
         }
     }
 
