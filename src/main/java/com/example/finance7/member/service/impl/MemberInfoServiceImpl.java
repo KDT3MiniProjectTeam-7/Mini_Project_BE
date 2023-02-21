@@ -72,7 +72,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
             memberRepository.save(memberUpdateInfoDto.toEntityWithUpdate(responseMember));
 
             return makeStatusResponse("success");
-        } catch (NullPointerException | NoSuchElementException e) {
+        } catch (NullPointerException e) {
             log.error(e.getMessage());
 
             return makeStatusResponse("fail");
