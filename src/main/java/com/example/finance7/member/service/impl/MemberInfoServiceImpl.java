@@ -31,22 +31,6 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     private final SearchHistoryRepository searchHistoryRepository;
 
     /**
-     * 회원 조회
-     *
-     * @return Member 회원 반환 (Entity)
-     */
-    @Override
-    public Member findMember(String header) throws NullPointerException {
-        MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
-
-        if (!memberService.isOpenUser(member)) {
-            throw new NoSuchElementException("이미 탈퇴한 회원입니다.");
-        }
-        return member;
-    }
-
-    /**
      * 회원 정보 조회
      *
      * @return email, name, age, tags 정보와 status 정보 반환 (response dto)
@@ -54,11 +38,12 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     @Override
     public StatusResponseDTO findMemberInfo(String header) {
         try {
-            Member member = findMember(header);
+            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
             int age = calculateAge(member.getBirthDay());
 
             return member.toMemberInfoDTO("success", age);
-        } catch (NullPointerException | NoSuchElementException e) {
+        } catch (NullPointerException e) {
             log.error(e.getMessage());
 
             return makeStatusResponse("fail");
@@ -75,7 +60,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     @Override
     public StatusResponseDTO updateMemberInfo(MemberInfoUpdateRequestDTO memberUpdateInfoDto, String header) {
         try {
-            Member responseMember = findMember(header);
+            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+            Member responseMember = memberService.findMemberByEmail(memberRequestDTO.getEmail());
             Member requestMember = memberUpdateInfoDto.toEntity(responseMember);
 
             if (!memberService.isMatchPassword(requestMember, responseMember)) {
