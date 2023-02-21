@@ -82,4 +82,8 @@ public class Member {
                 .accessToken(accessToken)
                 .build();
     }
+
+    public void insertTagString (String tagString) {
+        this.tags = tagString;
+    }
 }
