@@ -12,6 +12,7 @@ public class MemberInfoResponseDTO extends StatusResponseDTO {
 
     private String email;
     private String name;
+    private String birthday;
     private int age;
     private String tags;
 }

@@ -63,6 +63,7 @@ public class Member {
                 .status(status)
                 .email(email)
                 .name(name)
+                .birthday(birthDay.toString())
                 .age(age)
                 .tags(tags)
                 .build();

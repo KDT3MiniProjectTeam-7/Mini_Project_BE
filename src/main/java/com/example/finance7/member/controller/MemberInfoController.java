@@ -20,7 +20,7 @@ public class MemberInfoController {
     /**
      * 회원 정보 조회
      *
-     * @return email, name, age, tags 정보와 status 정보 반환 (response dto)
+     * @return email, name, birthday, age, tags 정보와 status 정보 반환 (response dto)
      */
     @GetMapping("/user")
     public StatusResponseDTO findMemberInfo(HttpServletRequest request) {
