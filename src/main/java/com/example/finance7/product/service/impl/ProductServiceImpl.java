@@ -140,9 +140,11 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponsePagingVO categoryList(String category, int page, String tagString) {
         PageRequest pageRequest = PageRequest.of(page - 1, SIZE);
         String[] tags = tagString.split("&");
+        if(tags[0].equals("noTag")){
+            return withoutTags(pageRequest, category, page);
+        }
         List<ProductResponseDTO> productResponseDTOList = new ArrayList<>();
         int totalPage = 0;
-
         if (category == null || category.equals("")){
             if(tags.length == 1){
                 Page<Product> allByTagsContaining = productRepository.findAllByTagsContaining(tags[0], pageRequest);
@@ -189,7 +191,6 @@ public class ProductServiceImpl implements ProductService {
                     productResponseDTOList.add(productResponseDTO);
                 }
             }
-
         }else if (category.equals("loan")) {
             if(tags.length == 1){
                 Page<Product> allByTagsContaining = loanRepository.findAllByTagsContaining(tags[0], pageRequest);
@@ -213,7 +214,6 @@ public class ProductServiceImpl implements ProductService {
                     productResponseDTOList.add(productResponseDTO);
                 }
             }
-
         }else if (category.equals("savings")) {
             if(tags.length == 1){
                 Page<Product> allByTagsContaining = savingsRepository.findAllByTagsContaining(tags[0], pageRequest);
@@ -237,7 +237,6 @@ public class ProductServiceImpl implements ProductService {
                     productResponseDTOList.add(productResponseDTO);
                 }
             }
-
         }else if (category.equals("subscription")) {
             if(tags.length == 1){
                 Page<Product> allByTagsContaining = subscriptionRepository.findAllByTagsContaining(tags[0], pageRequest);
@@ -265,6 +264,52 @@ public class ProductServiceImpl implements ProductService {
         }
         return getProductResponsePagingVO(page, productResponseDTOList, totalPage);
     }
+
+    /**
+     * Tag 가 없을시 이쪽 로직을 수행한다.
+     */
+    public ProductResponsePagingVO withoutTags(PageRequest pageRequest, String category, int page) {
+        List<ProductResponseDTO> productResponseDTOList = new ArrayList<>();
+        int totalPage = 0;
+        if(category == null || category.equals("")){
+            Page<Product> products = productRepository.findAll(pageRequest);
+            totalPage = products.getTotalPages();
+            for (Product product : products) {
+                ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(product);
+                productResponseDTOList.add(productResponseDTO);
+            }
+        } else if (category.equals("card")) {
+            Page<Card> cards = cardRepository.findAll(pageRequest);
+            totalPage = cards.getTotalPages();
+            for (Card card : cards) {
+                ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(card);
+                productResponseDTOList.add(productResponseDTO);
+            }
+        } else if (category.equals("loan")) {
+            Page<Loan> loans = loanRepository.findAll(pageRequest);
+            totalPage = loans.getTotalPages();
+            for (Loan loan : loans) {
+                ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(loan);
+                productResponseDTOList.add(productResponseDTO);
+            }
+        } else if (category.equals("savings")) {
+            Page<Savings> savings = savingsRepository.findAll(pageRequest);
+            totalPage = savings.getTotalPages();
+            for (Savings saving : savings) {
+                ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(saving);
+                productResponseDTOList.add(productResponseDTO);
+            }
+        } else if (category.equals("subscription")) {
+            Page<Subscription> subscriptions = subscriptionRepository.findAll(pageRequest);
+            totalPage = subscriptions.getTotalPages();
+            for (Subscription subscription : subscriptions) {
+                ProductResponseDTO productResponseDTO = new ProductResponseDTO().toDTO(subscription);
+                productResponseDTOList.add(productResponseDTO);
+            }
+        }
+        return getProductResponsePagingVO(page, productResponseDTOList, totalPage);
+    }
+
 
     /**
      * 데이터 결과가 있는지 없는지 반환 데이터 판별 메서드
