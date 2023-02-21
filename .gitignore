@@ -244,4 +244,7 @@ src/main/java/com/example/finance7/config/
 
 #application.properties
 src/main/resources/application.properties
+
+#logback-spring
+src/main/resources/logback-spring.xml
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+iml,gradle,java,vim,git
