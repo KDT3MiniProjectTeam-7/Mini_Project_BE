@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -59,11 +60,12 @@ public class Member {
      * @return 회원 정보와 status 정보 (response dto)
      */
     public MemberInfoResponseDTO toMemberInfoDTO(String status, int age) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return MemberInfoResponseDTO.builder()
                 .status(status)
                 .email(email)
                 .name(name)
-                .birthday(birthDay.toString())
+                .birthday(dateFormat.format(birthDay))
                 .age(age)
                 .tags(tags)
                 .build();
