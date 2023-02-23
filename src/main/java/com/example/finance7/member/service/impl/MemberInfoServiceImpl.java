@@ -75,6 +75,13 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     @Override
     public StatusResponseDTO updateMemberInfo(MemberInfoUpdateRequestDTO memberUpdateInfoDto, String header) {
         try {
+            if (memberUpdateInfoDto == null || memberUpdateInfoDto.getNewPassword() == null
+                    || memberUpdateInfoDto.getNewPassword().equals("") || memberUpdateInfoDto.getName() == null
+                    || memberUpdateInfoDto.getBirth() == null || memberUpdateInfoDto.getBirth().equals("")
+                    || memberUpdateInfoDto.getNewPassword() == null) {
+                throw new NullPointerException("잘못된 데이터입니다.");
+            }
+
             Member responseMember = findMember(header);
             Member requestMember = memberUpdateInfoDto.toEntity(responseMember);
 
