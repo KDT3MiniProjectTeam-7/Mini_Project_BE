@@ -82,8 +82,6 @@ public class RecentProductServiceImpl implements RecentProductService {
             return "CARD";
         } else if (product instanceof Loan) {
             return "LOAN";
-        } else if (product instanceof Product) {
-            return "PRODUCT";
         } else if (product instanceof Savings) {
             return "SAVINGS";
         } else if (product instanceof Subscription) {
