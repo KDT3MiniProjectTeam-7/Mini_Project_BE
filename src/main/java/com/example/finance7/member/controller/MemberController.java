@@ -40,8 +40,8 @@ public class MemberController {
      * 로그아웃
      */
     @PostMapping("/logout")
-    public String doLogout(HttpServletRequest request){
-        return memberService.doLogout(request.getHeader(HttpHeaders.AUTHORIZATION));
+    public MemberVO doLogout(HttpServletRequest request){
+        return memberService.doLogout(request.getHeader(HttpHeaders.AUTHORIZATION)).toVO();
 
     }
 }

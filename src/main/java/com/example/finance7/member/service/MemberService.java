@@ -12,5 +12,5 @@ public interface MemberService {
 
     MemberResponseDTO doRegister(MemberRequestDTO memberRequestDTO);
 
-    String doLogout(String accessToken);
+    MemberResponseDTO doLogout(String accessToken);
 }
