@@ -13,13 +13,11 @@ import com.example.finance7.member.repository.SearchHistoryRepository;
 import com.example.finance7.member.service.MemberInfoService;
 import com.example.finance7.member.vo.MemberSearchHistoryResponseVO;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MemberInfoServiceImpl implements MemberInfoService {
@@ -41,7 +39,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
 
         if (!memberService.isOpenUser(member)) {
-            throw new NoSuchElementException("이미 탈퇴한 회원입니다.");
+            throw new NoSuchElementException();
         }
         return member;
     }
@@ -59,7 +57,6 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
             return member.toMemberInfoDTO("success", age);
         } catch (NullPointerException | NoSuchElementException e) {
-            log.error(e.getMessage());
 
             return makeStatusResponse("fail");
         }
@@ -79,7 +76,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                     || memberUpdateInfoDto.getNewPassword().equals("") || memberUpdateInfoDto.getName() == null
                     || memberUpdateInfoDto.getBirth() == null || memberUpdateInfoDto.getBirth().equals("")
                     || memberUpdateInfoDto.getNewPassword() == null) {
-                throw new NullPointerException("잘못된 데이터입니다.");
+                throw new NullPointerException();
             }
 
             Member responseMember = findMember(header);
@@ -94,7 +91,6 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
             return makeStatusResponse("success");
         } catch (NullPointerException | NoSuchElementException e) {
-            log.error(e.getMessage());
 
             return makeStatusResponse("fail");
         }

@@ -14,14 +14,12 @@ import com.example.finance7.member.vo.RecentProductInfoVO;
 import com.example.finance7.product.entity.*;
 import com.example.finance7.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 @Repository
@@ -65,7 +63,6 @@ public class RecentProductServiceImpl implements RecentProductService {
                     .resultData(resultData)
                     .build();
         } catch (NullPointerException e) {
-            log.error(e.getMessage());
 
             return memberInfoService.makeStatusResponse("fail");
         }
@@ -121,7 +118,6 @@ public class RecentProductServiceImpl implements RecentProductService {
 
             return memberInfoService.makeStatusResponse("success");
         } catch (NullPointerException e) {
-            log.error(e.getMessage());
 
             return memberInfoService.makeStatusResponse("fail");
         }
