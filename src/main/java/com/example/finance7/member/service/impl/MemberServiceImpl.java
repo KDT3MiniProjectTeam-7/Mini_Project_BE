@@ -79,7 +79,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public String doLogout(String accessToken) {
-        String token = accessToken.substring("Baerer ".length());
+        String token = accessToken.substring("Bearer ".length());
 
         redisTemplate.opsForValue().getAndDelete(token);
 
