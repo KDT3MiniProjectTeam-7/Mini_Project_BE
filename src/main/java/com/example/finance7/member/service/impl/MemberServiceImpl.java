@@ -78,12 +78,19 @@ public class MemberServiceImpl implements MemberService {
      * @return
      */
     @Override
-    public String doLogout(String accessToken) {
-        String token = accessToken.substring("Bearer ".length());
+    public MemberResponseDTO doLogout(String accessToken) {
+        if (Objects.isNull(accessToken)){
+            return MemberResponseDTO.builder()
+                    .status("failed : 로그인이 필요합니다.")
+                    .build();
+        }
 
+        String token = accessToken.substring("Bearer ".length());
         redisTemplate.opsForValue().getAndDelete(token);
 
-        return "success";
+        return MemberResponseDTO.builder()
+                .status("success")
+                .build();
     }
 
     /**
