@@ -155,7 +155,15 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                         .status("success")
                         .build();
             } else {
-                throw new Exception();
+                searchHistoryRepository.deleteSearchHistoryByMemberIdAndSearchContent(member.getMemberId(), keyword);
+                SearchHistory searchHistory = SearchHistory.builder()
+                        .memberId(member.getMemberId())
+                        .searchContent(keyword)
+                        .build();
+                searchHistoryRepository.save(searchHistory);
+                return StatusResponseDTO.builder()
+                        .status("success")
+                        .build();
             }
         } catch (Exception e) {
             return StatusResponseDTO.builder()

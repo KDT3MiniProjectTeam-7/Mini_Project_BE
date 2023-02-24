@@ -26,4 +26,8 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
     @Query("delete from SearchHistory s where s.memberId = :memberId")
     int deleteByMemberId(@Param("memberId") Long memberId);
 
+
+    @Modifying
+    void deleteSearchHistoryByMemberIdAndSearchContent(Long memberId, String searchContent);
+
 }
