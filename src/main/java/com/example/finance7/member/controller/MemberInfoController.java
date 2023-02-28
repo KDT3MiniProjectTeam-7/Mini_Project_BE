@@ -4,13 +4,11 @@ import com.example.finance7.member.dto.*;
 import com.example.finance7.member.service.MemberInfoService;
 import com.example.finance7.member.vo.MemberSearchHistoryResponseVO;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class MemberInfoController {
